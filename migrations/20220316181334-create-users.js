@@ -38,7 +38,26 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'user'
-      }
+      },
+      pix: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      enviado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      campeãoId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: {
+            tableName: 'seleções'
+          },
+          key: 'id',
+        }
+      },
       }, 
       {
         tableName: 'users'

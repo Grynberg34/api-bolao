@@ -1,5 +1,6 @@
 const connection = require('../config/database');
 const { DataTypes } = require('sequelize');
+const Seleção = require('./Seleção');
 
 const User = connection.define('User', {
   id: { 
@@ -33,8 +34,20 @@ const User = connection.define('User', {
     allowNull: false,
     defaultValue: 'user'
   },
+  pix: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  enviado: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 },{
   tableName: 'users'
 });
+
+User.belongsTo(Seleção, {foreignKey: 'campeãoId'});
 
 module.exports = User;
