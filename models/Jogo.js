@@ -11,7 +11,7 @@ const Jogo = connection.define('Jogo', {
     primaryKey: true   
   },
   data: { 
-    type: DataTypes.STRING,
+    type: DataTypes.DATE,
     allowNull: true
   },
   local: { 
@@ -30,7 +30,7 @@ const Jogo = connection.define('Jogo', {
   tableName: 'jogos'
 });
 
-Jogo.belongsTo(Seleção, {as: "s1_id", foreignKey: 'jogoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
-Jogo.belongsTo(Seleção, {as: "s2_id", foreignKey: 'jogoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
+Jogo.belongsTo(Seleção, {as: "s1_id", foreignKey: 's1_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
+Jogo.belongsTo(Seleção, {as: "s2_id", foreignKey: 's2_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
 
 module.exports = Jogo;

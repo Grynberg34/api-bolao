@@ -20,6 +20,5 @@ const Classificado = connection.define('Classificado', {
 });
 
 Classificado.belongsTo(Seleção, {foreignKey: 'seleçãoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
-Classificado.belongsTo(User, {foreignKey: 'userId', onUpdate: 'cascade', onDelete: 'CASCADE'});
 
 module.exports = Classificado;

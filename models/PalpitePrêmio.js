@@ -11,13 +11,9 @@ const PalpitePrêmio = connection.define('PalpitePrêmio', {
     autoIncrement: true,
     primaryKey: true   
   },
-  s1_placar: { 
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  s2_placar: { 
-    type: DataTypes.INTEGER,
-    allowNull: false
+  ganhador: { 
+    type: DataTypes.STRING,
+    allowNull: true
   },
 },{
   tableName: 'palpites_prêmios'

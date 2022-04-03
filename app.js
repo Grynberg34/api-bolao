@@ -79,7 +79,7 @@ passport.use(new GoogleStrategy(
   })
   .catch(function(err){
     console.log(err)
-    res.redirect('/login')
+    return done(null, false);
   });
 }
 ));
