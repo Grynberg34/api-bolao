@@ -49,15 +49,6 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
-      campeãoId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: {
-            tableName: 'seleções'
-          },
-          key: 'id',
-        }
-      },
       }, 
       {
         tableName: 'users'

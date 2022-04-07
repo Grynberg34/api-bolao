@@ -8,6 +8,8 @@ router.get('/', passport.authenticate('jwt', {session: false}), authController.c
 
 router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
 
-router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
+router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpitePrêmio);
+
+router.post('/enviar-palpite-classificado', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteClassificado);
 
 module.exports = router;
