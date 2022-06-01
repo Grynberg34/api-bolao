@@ -11,7 +11,7 @@ module.exports = {
     var token = req.header('authorization').substr(7);
 
     jwt.verify(token, process.env.JWT_KEY, function(err, decoded) {
-      res.status(400).json(decoded)
+      res.status(200).json(decoded)
     });
   },
   enviarPalpiteJogo: async function (req,res) {

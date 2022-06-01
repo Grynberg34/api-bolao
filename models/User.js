@@ -44,6 +44,11 @@ const User = connection.define('User', {
     allowNull: false,
     defaultValue: false
   },
+  token_redefinir: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null
+  },
 },{
   tableName: 'users'
 });

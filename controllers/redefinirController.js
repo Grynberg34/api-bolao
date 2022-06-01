@@ -9,9 +9,6 @@ var transporter = nodemailer.createTransport(smtpTransport({
     auth: {
       user: process.env.MAILER_USER,
       pass: process.env.MAILER_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
     }
 }));
 
@@ -20,15 +17,23 @@ module.exports= {
     pedirRefinicaoSenha: function (req,res) {
         var email = req.body.email;
         var code = uuidv4();
-        
+
+        if (email === undefined) {
+            return res.status(400).json('Campo vazio.')
+        }
+
         User.findOne({ where: {email: email} }).then(user => {
             if (!user) {
                 return res.status(400).json("Não foi encontrada nenhuma conta com esse email.")
             }   
             
             if (user) {
-                user.update({
+                User.update({
                     token_redefinir: code
+                }, {
+                    where: {
+                        id: user.id
+                    }
                 })
 
                 var mailOptions = {
@@ -60,6 +65,7 @@ module.exports= {
         var password = req.body.password;
         var repeat = req.body.repeatpassword;
         var hashedpassword = bcrypt.hashSync(password, 10);
+
         if (password == repeat){
 
             User.findOne({ where: {token_redefinir: emailcode} }).then(user => {
@@ -68,9 +74,13 @@ module.exports= {
                 }
 
                 if (user) {
-                    user.update({
+                    User.update({
                         password: hashedpassword,
                         token_redefinir: null
+                    }, {
+                        where: {
+                            id : user.id
+                        }
                     })
 
                     return res.status(200).json('Senha alterada com sucesso.')

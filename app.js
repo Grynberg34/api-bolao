@@ -7,6 +7,8 @@ const User = require('./models/User');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const cors = require('cors');
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 const indexRouter = require('./routes/index');
 const cadastroRouter = require('./routes/cadastro');
@@ -24,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 
 
@@ -124,7 +127,7 @@ app.use((req, res) => {
 });
 
 // Listen to port 3000
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
 app.listen(port, function () {
     console.log('Listening on port', port);
 });
