@@ -8,9 +8,11 @@ module.exports = {
   autenticar: function (req,res) {
     passport.authenticate('google', {session: false}, 
     function (err, user, info){
-      var payload = { id: user.id, tipo_conta: user.tipo_conta };
-      var token = jwt.sign(payload, jwtOptions.secretOrKey);
-      return res.status(200).json({ "mensagem" : 'Token gerado', token: token });
+      if (user) {
+        return res.redirect('http://localhost:3000/login')
+      } else {
+        return res.status(400).json("Usuário com esse nome existe. Tente novamente");
+      }
     }) (req, res)
   },
   checarUser: function (req,res,next) {
