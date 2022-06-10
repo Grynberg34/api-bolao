@@ -28,8 +28,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-
-
 // Passport
 app.use(passport.initialize());
 
@@ -51,7 +49,7 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
   })
   .catch(function(err){
     console.log(err)
-    res.redirect('/login')
+    return res.redirect('/login')
   });
 
 }));
@@ -63,7 +61,7 @@ passport.use(new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/google/callback",
+    callbackURL: "http://localhost:8080/auth/google",
     scope: "profile"
   },
   function(accessToken, refreshToken, profile, done) {

@@ -12,7 +12,6 @@ module.exports = {
       },
       nome: { 
           type: DataTypes.STRING,
-          unique: true,
           allowNull: true,
       },
       email: { 
