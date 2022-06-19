@@ -17,7 +17,7 @@ module.exports= {
             if (user) {
                 bcrypt.compare(password, user.password, function(err, isMatch) {
                     if(isMatch){
-                    var payload = { id: user.id, tipo_conta: user.tipo_conta };
+                    var payload = { id: user.id, nome: user.nome, tipo_conta: user.tipo_conta, verificado: user.verificado, pix: user.pix, enviado: user.enviado };
                     var token = jwt.sign(payload, jwtOptions.secretOrKey);
                     return res.status(200).json({ "mensagem" : 'Token gerado', token: token });
                     } 

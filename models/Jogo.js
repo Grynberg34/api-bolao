@@ -26,6 +26,9 @@ const Jogo = connection.define('Jogo', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
+  tipo_conta: {
+    type: DataTypes.STRING,
+  },
 },{
   tableName: 'jogos'
 });

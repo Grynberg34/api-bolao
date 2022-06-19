@@ -43,6 +43,11 @@ const User = connection.define('User', {
     allowNull: false,
     defaultValue: false
   },
+  verificado: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   token_redefinir: {
     type: DataTypes.STRING,
     allowNull: true,
