@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const Jogo = require('../models/Jogo');
+const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
 const PalpitePrêmio = require('../models/PalpitePrêmio');
 const PalpiteClassificado = require('../models/PalpiteClassificado');
@@ -14,6 +16,40 @@ module.exports = {
       res.status(200).json(decoded)
     });
   },
+
+
+  mostrarJogosGrupo: async function (req, res) {
+
+    var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+    var grupos = [];
+
+    for (var i=0; i < letras.length; i++) {
+      
+      var grupo = {
+        letra: letras[i],
+        jogos: []
+      }
+
+      var jogos = await Jogo.findAll({
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+        where: {
+          grupo: letras[i]
+        }
+      });
+
+      grupo.jogos = jogos;
+
+      grupos.push(grupo)
+
+    }
+
+    res.status(200).json(grupos)
+
+  },
+
   enviarPalpiteJogo: async function (req,res) {
     var token = req.header('authorization').substr(7);
     var id_jogo = req.body.id_jogo;

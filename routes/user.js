@@ -6,6 +6,8 @@ const userController = require('../controllers/userController');
 
 router.get('/', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarInfosUser);
 
+router.get('/jogos', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosGrupo);
+
 router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
 
 router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpitePrêmio);

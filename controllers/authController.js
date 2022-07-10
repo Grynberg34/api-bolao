@@ -41,6 +41,7 @@ module.exports = {
     var token = req.header('authorization').substr(7);
 
     jwt.verify(token, process.env.JWT_KEY, function(err, decoded) {
+      console.log(decoded.tipo_conta)
       if (err) {
         console.log(err)
         res.status(400).json("Token falso")

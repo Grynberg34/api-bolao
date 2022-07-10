@@ -26,14 +26,11 @@ const Jogo = connection.define('Jogo', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  tipo_conta: {
-    type: DataTypes.STRING,
-  },
 },{
   tableName: 'jogos'
 });
 
-Jogo.belongsTo(Seleção, {foreignKey: 's1_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
-Jogo.belongsTo(Seleção, {foreignKey: 's2_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
+Jogo.belongsTo(Seleção, {as:'s1', foreignKey: 's1_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
+Jogo.belongsTo(Seleção, {as: 's2', foreignKey: 's2_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
 
 module.exports = Jogo;
