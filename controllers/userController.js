@@ -149,5 +149,80 @@ module.exports = {
       return res.status(201).json("Palpite enviado")
 
     });
+  },
+  ordenarGrupos: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var grupos = [];
+
+      for (var i = 0; i < letras.length; i++) {
+        var palpites = await PalpiteJogo.findAll({
+          include: [
+            { model: Jogo, 
+            where: {
+              grupo: letras[i]
+            }}
+          ],
+          where: {
+            userId: decoded.id
+          }}
+        );
+
+        var grupo = [];
+
+        var seleções = await Seleção.findAll({
+          where: {
+            grupo: letras[i]
+          }
+        });
+
+        for (var a=0; a < seleções.length; a++) {
+          seleções[a].golsPro = 0;
+          seleções[a].golsContra = 0;
+          seleções[a].saldo = 0;
+          seleções[a].pontos = 0;
+        }
+
+        for (var e=0; e < palpites.length; e++) {
+
+          var s1 = seleções.find(x => x.id === palpites[e].Jogo.s1_id)
+          var s2 = seleções.find(x => x.id === palpites[e].Jogo.s2_id)
+
+          console.log(s1.pontos)
+
+          s1.golsPro = s1.golsPro + palpites[e].s1_placar;
+          s1.golsContra = s1.golsContra + palpites[e].s2_placar;
+          s1.saldo = s1.golsPro - s1.golsContra;
+
+          s2.golsPro = s2.golsPro + palpites[e].s2_placar;
+          s2.golsContra = s2.golsContra + palpites[e].s1_placar;
+          s2.saldo = s2.golsPro - s2.golsContra;
+
+          if (palpites[e].s1_placar > palpites[e].s2_placar) {
+            s1.pontos = s1.pontos + 3
+          }
+
+          if (palpites[e].s1_placar < palpites[e].s2_placar) {
+            s2.pontos = s2.pontos + 3
+          }
+
+          if (palpites[e].s1_placar = palpites[e].s2_placar) {
+            s1.pontos = s1.pontos + 1
+            s2.pontos = s2.pontos + 1
+
+          }
+
+        }
+
+      }
+
+      return res.status(201).json(grupos)
+
+    });
+
   }
 }
