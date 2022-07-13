@@ -172,7 +172,11 @@ module.exports = {
           }}
         );
 
-        var grupo = [];
+        var grupo = {
+          letra: letras[i],
+          classificacao: []
+
+        };
 
         var seleções = await Seleção.findAll({
           where: {
@@ -181,10 +185,10 @@ module.exports = {
         });
 
         for (var a=0; a < seleções.length; a++) {
-          seleções[a].golsPro = 0;
-          seleções[a].golsContra = 0;
-          seleções[a].saldo = 0;
-          seleções[a].pontos = 0;
+          seleções[a].dataValues.golsPro = 0;
+          seleções[a].dataValues.golsContra = 0;
+          seleções[a].dataValues.saldo = 0;
+          seleções[a].dataValues.pontos = 0;
         }
 
         for (var e=0; e < palpites.length; e++) {
@@ -192,31 +196,39 @@ module.exports = {
           var s1 = seleções.find(x => x.id === palpites[e].Jogo.s1_id)
           var s2 = seleções.find(x => x.id === palpites[e].Jogo.s2_id)
 
-          console.log(s1.pontos)
+          s1.dataValues.golsPro = s1.dataValues.golsPro + palpites[e].s1_placar;
+          s1.dataValues.golsContra = s1.dataValues.golsContra + palpites[e].s2_placar;
+          s1.dataValues.saldo = s1.dataValues.golsPro - s1.dataValues.golsContra;
 
-          s1.golsPro = s1.golsPro + palpites[e].s1_placar;
-          s1.golsContra = s1.golsContra + palpites[e].s2_placar;
-          s1.saldo = s1.golsPro - s1.golsContra;
-
-          s2.golsPro = s2.golsPro + palpites[e].s2_placar;
-          s2.golsContra = s2.golsContra + palpites[e].s1_placar;
-          s2.saldo = s2.golsPro - s2.golsContra;
+          s2.dataValues.golsPro = s2.dataValues.golsPro + palpites[e].s2_placar;
+          s2.dataValues.golsContra = s2.dataValues.golsContra + palpites[e].s1_placar;
+          s2.dataValues.saldo = s2.dataValues.golsPro - s2.dataValues.golsContra;
 
           if (palpites[e].s1_placar > palpites[e].s2_placar) {
-            s1.pontos = s1.pontos + 3
+            s1.dataValues.pontos = s1.dataValues.pontos + 3
           }
 
           if (palpites[e].s1_placar < palpites[e].s2_placar) {
-            s2.pontos = s2.pontos + 3
+            s2.dataValues.pontos = s2.dataValues.pontos + 3
           }
 
-          if (palpites[e].s1_placar = palpites[e].s2_placar) {
-            s1.pontos = s1.pontos + 1
-            s2.pontos = s2.pontos + 1
+          if (palpites[e].s1_placar == palpites[e].s2_placar) {
+            s1.dataValues.pontos = s1.dataValues.pontos + 1
+            s2.dataValues.pontos = s2.dataValues.pontos + 1
 
           }
 
         }
+
+        grupo.classificacao = seleções;
+
+        grupo.classificacao.sort((a, b) => parseFloat(b.dataValues.pontos) - parseFloat(a.dataValues.pontos) 
+        || parseFloat(b.dataValues.saldo) - parseFloat(a.dataValues.saldo)
+        || parseFloat(b.dataValues.golsPro) - parseFloat(a.dataValues.golsPro)
+        || parseFloat(a.dataValues.golsContra) - parseFloat(b.dataValues.golsContra))
+
+
+        grupos.push(grupo)
 
       }
 
