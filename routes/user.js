@@ -18,6 +18,4 @@ router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false
 
 router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpitePrêmio);
 
-router.post('/enviar-palpite-classificado', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteClassificado);
-
 module.exports = router;

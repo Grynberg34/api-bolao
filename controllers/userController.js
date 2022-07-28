@@ -3,7 +3,6 @@ const Jogo = require('../models/Jogo');
 const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
 const PalpitePrêmio = require('../models/PalpitePrêmio');
-const PalpiteClassificado = require('../models/PalpiteClassificado');
 
 var jwtOptions = {};
 jwtOptions.secretOrKey = process.env.JWT_KEY;
@@ -54,7 +53,7 @@ module.exports = {
     var token = req.header('authorization').substr(7);
     var id_jogo = req.body.id_jogo;
     var s1_placar = req.body.s1_placar;
-    var s2_placar = req.body.s2_placar
+    var s2_placar = req.body.s2_placar;
 
     jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
 
@@ -130,23 +129,6 @@ module.exports = {
         return res.status(201).json("Palpite atualizado")
 
       }
-
-    });
-  },
-  enviarPalpiteClassificado: async function (req,res) {
-    var token = req.header('authorization').substr(7);
-    var sel_id = req.body.sel_id;
-    var fase = req.body.fase; 
-
-    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
-
-      await PalpiteClassificado.create({
-        seleçãoId: sel_id,
-        userId : decoded.id,
-        fase: fase
-      });
-
-      return res.status(201).json("Palpite enviado")
 
     });
   },
