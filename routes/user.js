@@ -14,6 +14,8 @@ router.get('/checar-grupos', passport.authenticate('jwt', {session: false}), aut
 
 router.get('/oitavas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosOitavas);
 
+router.get('/quartas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.moostrarJogosQuartas);
+
 router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
 
 router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpitePrêmio);

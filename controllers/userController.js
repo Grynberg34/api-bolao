@@ -54,6 +54,9 @@ module.exports = {
     var id_jogo = req.body.id_jogo;
     var s1_placar = req.body.s1_placar;
     var s2_placar = req.body.s2_placar;
+    var vencedor = req.body.vencedor;
+
+
 
     jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
 
@@ -67,7 +70,8 @@ module.exports = {
           jogoId: id_jogo,
           userId: decoded.id,
           s1_placar: s1_placar,
-          s2_placar: s2_placar
+          s2_placar: s2_placar,
+          vencedor: vencedor
         });
 
         return res.status(201).json("Palpite enviado")
@@ -78,7 +82,8 @@ module.exports = {
           jogoId: id_jogo,
           userId: decoded.id,
           s1_placar: s1_placar,
-          s2_placar: s2_placar
+          s2_placar: s2_placar,
+          vencedor: vencedor
         }, {
           where: {
             jogoId: id_jogo,
@@ -376,7 +381,7 @@ module.exports = {
 
       }
 
-      var palpites_todos = await PalpiteJogo.findAll({
+      var palpites_novos = await PalpiteJogo.findAll({
         where: {
           userId: decoded.id
         },
@@ -386,14 +391,121 @@ module.exports = {
         ],
       })
 
-      for (var i=0; i < palpites_todos.length; i++) {
-        if (palpites_todos[i].jogoId > 48 && palpites_todos[i].jogoId < 57) {
-          oitavas.push(palpites_todos[i])
+      for (var i=0; i < palpites_novos.length; i++) {
+        if (palpites_novos[i].jogoId > 48 && palpites_novos[i].jogoId < 57) {
+          oitavas.push(palpites_novos[i])
         }
       }
 
       return res.status(201).json(oitavas)
 
     });
+  },
+  moostrarJogosQuartas: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      });
+
+      var oitavas = [];
+      var quartas = [];
+      
+      for (var i=0; i < palpites.length; i++) {
+        if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
+          oitavas.push(palpites[i])
+        }
+      }
+
+      for (var i=0; i < oitavas.length; i++) {
+        if (oitavas[i].s1_placar === null || oitavas[i].s2_placar === null) {
+          return res.status(201).json(null)
+        } else if (oitavas[i].s1_placar > oitavas[i].s2_placar) {
+          await PalpiteJogo.update({
+            vencedor: oitavas[i].s1_id
+          }, {
+            where: {
+              jogoId: oitavas[i].jogoId,
+              userId: decoded.id
+            }
+          });
+        } else if (oitavas[i].s2_placar > oitavas[i].s1_placar) {
+          await PalpiteJogo.update({
+            vencedor: oitavas[i].s2_id
+          }, {
+            where: {
+              jogoId: oitavas[i].jogoId,
+              userId: decoded.id
+            }
+          });
+        }
+      }
+
+      var confrontos = [
+        [oitavas[0].vencedor, oitavas[1].vencedor],
+        [oitavas[2].vencedor, oitavas[3].vencedor],
+        [oitavas[4].vencedor, oitavas[5].vencedor],
+        [oitavas[6].vencedor, oitavas[7].vencedor],
+      ];
+
+      for (var i=0; i < confrontos.length; i++) {
+
+        let palpite = await PalpiteJogo.findOne({
+          where: {
+            jogoId: 57+i,
+            userId: decoded.id
+          }
+        });
+
+        if (palpite) {
+          await PalpiteJogo.update({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 57+i,
+            userId: decoded.id
+          }, {
+            where: {
+              jogoId: 57+i,
+              userId: decoded.id
+            }
+          });
+        } else {
+          await PalpiteJogo.create({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 57+i,
+            userId: decoded.id
+          })
+        }
+
+      }
+
+      var palpites_novos = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      })
+
+      for (var i=0; i < palpites_novos.length; i++) {
+        if (palpites_novos[i].jogoId > 56 && palpites_novos[i].jogoId < 61) {
+          quartas.push(palpites_novos[i])
+        }
+      }
+
+      return res.status(201).json(quartas)
+
+    })
+
   }
 }

@@ -24,6 +24,7 @@ const PalpiteJogo = connection.define('PalpiteJogo', {
   tableName: 'palpites_jogos'
 });
 
+PalpiteJogo.belongsTo(Seleção, {foreignKey: 'vencedor', onUpdate: 'cascade', onDelete: 'CASCADE'});
 PalpiteJogo.belongsTo(Seleção, {as:'s1', foreignKey: 's1_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
 PalpiteJogo.belongsTo(Seleção, {as:'s2', foreignKey: 's2_id', onUpdate: 'cascade', onDelete: 'CASCADE'});
 PalpiteJogo.belongsTo(Jogo, {foreignKey: 'jogoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
