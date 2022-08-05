@@ -15,8 +15,6 @@ module.exports = {
       res.status(200).json(decoded)
     });
   },
-
-
   mostrarJogosGrupo: async function (req, res) {
 
     var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -48,7 +46,6 @@ module.exports = {
     res.status(200).json(grupos)
 
   },
-
   enviarPalpiteJogo: async function (req,res) {
     var token = req.header('authorization').substr(7);
     var id_jogo = req.body.id_jogo;
@@ -401,7 +398,36 @@ module.exports = {
 
     });
   },
-  moostrarJogosQuartas: async function (req,res) {
+  checarOitavas: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesOitavas = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 48 && palpites[i].jogoId < 57) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesOitavas.push(palpites[i])
+        }
+      }
+
+      if (palpitesOitavas.length == 8) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  mostrarJogosQuartas: async function (req,res) {
     var token = req.header('authorization').substr(7);
 
     jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
@@ -425,9 +451,7 @@ module.exports = {
       }
 
       for (var i=0; i < oitavas.length; i++) {
-        if (oitavas[i].s1_placar === null || oitavas[i].s2_placar === null) {
-          return res.status(201).json(null)
-        } else if (oitavas[i].s1_placar > oitavas[i].s2_placar) {
+        if (oitavas[i].s1_placar > oitavas[i].s2_placar) {
           await PalpiteJogo.update({
             vencedor: oitavas[i].s1_id
           }, {
@@ -436,6 +460,8 @@ module.exports = {
               userId: decoded.id
             }
           });
+
+          oitavas[i].vencedor = oitavas[i].s1_id;
         } else if (oitavas[i].s2_placar > oitavas[i].s1_placar) {
           await PalpiteJogo.update({
             vencedor: oitavas[i].s2_id
@@ -445,6 +471,8 @@ module.exports = {
               userId: decoded.id
             }
           });
+
+          oitavas[i].vencedor = oitavas[i].s2_id;
         }
       }
 
@@ -507,5 +535,290 @@ module.exports = {
 
     })
 
-  }
+  },
+  checarQuartas: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesQuartas = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 56 && palpites[i].jogoId < 61) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesQuartas.push(palpites[i])
+        }
+      }
+
+      if (palpitesQuartas.length == 4) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  checarSemis: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesSemis = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 60 && palpites[i].jogoId < 63) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesSemis.push(palpites[i])
+        }
+      }
+
+      if (palpitesSemis.length == 2) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  mostrarJogosSemis: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      });
+
+      var quartas = [];
+      var semis = [];
+      
+      for (var i=0; i < palpites.length; i++) {
+        if (palpites[i].jogoId > 56 && palpites[i].jogoId < 61) {
+          quartas.push(palpites[i])
+        }
+      }
+
+      for (var i=0; i < quartas.length; i++) {
+        if (quartas[i].s1_placar > quartas[i].s2_placar) {
+          await PalpiteJogo.update({
+            vencedor: quartas[i].s1_id
+          }, {
+            where: {
+              jogoId: quartas[i].jogoId,
+              userId: decoded.id
+            }
+          });
+
+          quartas[i].vencedor = quartas[i].s1_id;
+        } else if (quartas[i].s2_placar > quartas[i].s1_placar) {
+          await PalpiteJogo.update({
+            vencedor: quartas[i].s2_id
+          }, {
+            where: {
+              jogoId: quartas[i].jogoId,
+              userId: decoded.id
+            }
+          });
+
+          quartas[i].vencedor = quartas[i].s2_id;
+        }
+      }
+
+      var confrontos = [
+        [quartas[0].vencedor, quartas[1].vencedor],
+        [quartas[2].vencedor, quartas[3].vencedor],
+
+      ];
+
+      for (var i=0; i < confrontos.length; i++) {
+
+        let palpite = await PalpiteJogo.findOne({
+          where: {
+            jogoId: 61+i,
+            userId: decoded.id
+          }
+        });
+
+        if (palpite) {
+          await PalpiteJogo.update({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 61+i,
+            userId: decoded.id
+          }, {
+            where: {
+              jogoId: 61+i,
+              userId: decoded.id
+            }
+          });
+        } else {
+          await PalpiteJogo.create({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 61+i,
+            userId: decoded.id
+          })
+        }
+
+      }
+
+      var palpites_novos = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      })
+
+      for (var i=0; i < palpites_novos.length; i++) {
+        if (palpites_novos[i].jogoId > 60 && palpites_novos[i].jogoId < 63) {
+          semis.push(palpites_novos[i])
+        }
+      }
+
+      return res.status(201).json(semis)
+
+    })
+
+  },
+  mostrarJogosFinais: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      });
+
+      var semis = [];
+      var finais = [];
+
+      for (var i=0; i < palpites.length; i++) {
+        if (palpites[i].jogoId > 60 && palpites[i].jogoId < 63) {
+          semis.push(palpites[i])
+        }
+      }
+
+      for (var i=0; i < semis.length; i++) {
+        if (semis[i].s1_placar > semis[i].s2_placar) {
+          await PalpiteJogo.update({
+            vencedor: semis[i].s1_id
+          }, {
+            where: {
+              jogoId: semis[i].jogoId,
+              userId: decoded.id
+            }
+          });
+
+          semis[i].vencedor = semis[i].s1_id;
+        } else if (semis[i].s2_placar > semis[i].s1_placar) {
+          await PalpiteJogo.update({
+            vencedor: semis[i].s2_id
+          }, {
+            where: {
+              jogoId: semis[i].jogoId,
+              userId: decoded.id
+            }
+          });
+
+          semis[i].vencedor = semis[i].s2_id;
+        }
+      }
+
+      for (var i=0; i < semis.length; i++) {
+        if (semis[i].s1_id !== semis[i].vencedor) {
+          semis[i].perdedor = semis[i].s1_id
+        } else if (semis[i].s2_id !== semis[i].vencedor) {
+          semis[i].perdedor = semis[i].s2_id
+        }
+      }
+
+      var confrontos = [
+        [semis[0].perdedor, semis[1].perdedor],
+        [semis[0].vencedor, semis[1].vencedor],
+
+      ];
+
+  
+      for (var i=0; i < confrontos.length; i++) {
+
+        let palpite = await PalpiteJogo.findOne({
+          where: {
+            jogoId: 63+i,
+            userId: decoded.id
+          }
+        });
+
+        if (palpite) {
+          await PalpiteJogo.update({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 63+i,
+            userId: decoded.id
+          }, {
+            where: {
+              jogoId: 63+i,
+              userId: decoded.id
+            }
+          });
+        } else {
+          await PalpiteJogo.create({
+            s1_id: confrontos[i][0],
+            s2_id: confrontos[i][1],
+            jogoId: 63+i,
+            userId: decoded.id
+          })
+        }
+
+      }
+
+      var palpites_novos = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+        ],
+      })
+
+      for (var i=0; i < palpites_novos.length; i++) {
+        if (palpites_novos[i].jogoId > 62 && palpites_novos[i].jogoId < 65) {
+          finais.push(palpites_novos[i])
+        }
+      }
+
+      console.log(finais)
+
+      return res.status(201).json(finais)
+
+    })
+
+  },
 }

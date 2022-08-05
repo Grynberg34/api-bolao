@@ -12,9 +12,19 @@ router.get('/classificacao', passport.authenticate('jwt', {session: false}), aut
 
 router.get('/checar-grupos', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.checarGrupos);
 
+router.get('/checar-oitavas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.checarOitavas);
+
+router.get('/checar-quartas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.checarQuartas);
+
+router.get('/checar-semis', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.checarSemis);
+
 router.get('/oitavas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosOitavas);
 
-router.get('/quartas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.moostrarJogosQuartas);
+router.get('/quartas', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosQuartas);
+
+router.get('/semis', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosSemis);
+
+router.get('/finais', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarJogosFinais);
 
 router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
 
