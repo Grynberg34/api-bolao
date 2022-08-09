@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 const Jogo = require('../models/Jogo');
 const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
@@ -62,7 +63,7 @@ module.exports = {
         userId : decoded.id,
       }});
 
-      if (palpite == null) {
+      if (palpite === null) {
         await PalpiteJogo.create({
           jogoId: id_jogo,
           userId: decoded.id,
@@ -99,6 +100,10 @@ module.exports = {
     var id_prêmio = req.body.id_prêmio;
     var ganhador = req.body.ganhador;
 
+    if (ganhador === undefined) {
+      return res.status(400).json({ "mensagem" : 'Campo de nome do ganhador não pode ficar vazio' });
+    }
+
     jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
 
       var palpite = await PalpitePrêmio.findOne({where: {
@@ -106,7 +111,7 @@ module.exports = {
         userId : decoded.id,
       }});
 
-      if (palpite == null) {
+      if (palpite === null) {
         await PalpitePrêmio.create({
           prêmioId: id_prêmio,
           userId : decoded.id,
@@ -196,7 +201,7 @@ module.exports = {
             s2.dataValues.pontos = s2.dataValues.pontos + 3
           }
 
-          if (palpites[e].s1_placar == palpites[e].s2_placar) {
+          if (palpites[e].s1_placar === palpites[e].s2_placar) {
             s1.dataValues.pontos = s1.dataValues.pontos + 1
             s2.dataValues.pontos = s2.dataValues.pontos + 1
 
@@ -242,7 +247,7 @@ module.exports = {
         }
       }
 
-      if (palpitesFaseGrupos.length == 48) {
+      if (palpitesFaseGrupos.length === 48) {
         done = true;
       }
 
@@ -312,7 +317,7 @@ module.exports = {
             s2.dataValues.pontos = s2.dataValues.pontos + 3
           }
 
-          if (palpites[e].s1_placar == palpites[e].s2_placar) {
+          if (palpites[e].s1_placar === palpites[e].s2_placar) {
             s1.dataValues.pontos = s1.dataValues.pontos + 1
             s2.dataValues.pontos = s2.dataValues.pontos + 1
 
@@ -419,7 +424,7 @@ module.exports = {
         }
       }
 
-      if (palpitesOitavas.length == 8) {
+      if (palpitesOitavas.length === 8) {
         done = true;
       }
 
@@ -557,7 +562,7 @@ module.exports = {
         }
       }
 
-      if (palpitesQuartas.length == 4) {
+      if (palpitesQuartas.length === 4) {
         done = true;
       }
 
@@ -586,7 +591,40 @@ module.exports = {
         }
       }
 
-      if (palpitesSemis.length == 2) {
+      if (palpitesSemis.length === 2) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  checarFinais: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesSemis = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 62 && palpites[i].jogoId < 65) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesSemis.push(palpites[i])
+        }
+      }
+
+      var palpites_prêmios = await PalpitePrêmio.findAll({where: {
+        userId: decoded.id
+      }});
+
+      if (palpitesSemis.length === 2 && palpites_prêmios.length === 2) {
         done = true;
       }
 
@@ -814,9 +852,77 @@ module.exports = {
         }
       }
 
-      console.log(finais)
-
       return res.status(201).json(finais)
+
+    })
+
+  },
+  finalizarBolao: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpite_final = await PalpiteJogo.findOne({where:{
+        jogoId: 64,
+        userId: decoded.id
+      }});
+
+
+      if (palpite_final.s1_placar > palpite_final.s2_placar) {
+
+        await PalpiteJogo.update({
+          vencedor: palpite_final.s1_id
+        }, {
+          where: {
+            jogoId: 64,
+            userId: decoded.id
+          }
+        })
+
+        await User.update({
+          campeãoId: palpite_final.s1_id,
+          enviado: true
+
+        }, {
+          where: {
+            id: decoded.id
+          }
+        })
+
+      } else if (palpite_final.s2_placar > palpite_final.s1_placar) {
+
+        await PalpiteJogo.update({
+          vencedor: palpite_final.s2_id
+        }, {
+          where: {
+            jogoId: 64,
+            userId: decoded.id
+          }
+        })
+
+        await User.update({
+          campeãoId: palpite_final.s2_id,
+          enviado: true
+
+        }, {
+          where: {
+            id: decoded.id
+          }
+        })
+
+      } else {
+        await User.update({
+          campeãoId: palpite_final.vencedor,
+          enviado: true
+
+        }, {
+          where: {
+            id: decoded.id
+          }
+        })
+      }
+
+      return res.status(201).json(true)
 
     })
 
