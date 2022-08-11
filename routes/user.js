@@ -34,4 +34,6 @@ router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: fal
 
 router.get('/finalizar', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.finalizarBolao);
 
+router.get('/mostrar-palpites', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpites);
+
 module.exports = router;

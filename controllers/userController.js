@@ -927,4 +927,63 @@ module.exports = {
     })
 
   },
+  mostrarPalpites: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+      
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        },
+        include: [
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+          { model: Jogo, include: [
+            {model: Seleção, as: 's1'},
+            {model: Seleção, as: 's2'}
+          ]},
+        ],
+      });
+
+      var bolao = [];
+      var grupos = [];
+      var oitavas = [];
+      var quartas =[];
+      var semis = [];
+      var finais = [];
+
+      for (var i=0; i < palpites.length; i++) {
+        if (palpites[i].jogoId > 0 && palpites[i].jogoId < 49) {
+          grupos.push(palpites[i])
+        } else if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
+          oitavas.push(palpites[i])
+        } else if (palpites[i].jogoId > 56 && palpites[i].jogoId < 61) {
+          quartas.push(palpites[i])
+        } else if (palpites[i].jogoId > 60 && palpites[i].jogoId < 63) {
+          semis.push(palpites[i])
+        } else if (palpites[i].jogoId > 62 && palpites[i].jogoId < 65) {
+          finais.push(palpites[i])
+        }
+      }
+
+      var user = await User.findOne({
+        where: {
+          id: decoded.id
+        },
+        include: Seleção
+      });
+
+      var prêmios = await PalpitePrêmio.findAll({
+        where: {
+          userId: decoded.id
+        }
+      })
+
+      bolao.push(grupos, oitavas, quartas, semis, finais, user, prêmios);
+
+      return res.status(201).json(bolao)
+    
+    })
+  }
 }
