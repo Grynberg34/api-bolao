@@ -4,6 +4,7 @@ const Jogo = require('../models/Jogo');
 const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
 const PalpitePrêmio = require('../models/PalpitePrêmio');
+const PontuaçãoJogo = require('../models/PontuaçãoJogo');
 
 var jwtOptions = {};
 jwtOptions.secretOrKey = process.env.JWT_KEY;
@@ -936,6 +937,9 @@ module.exports = {
         where: {
           userId: decoded.id
         },
+        order: [
+          [{ model: Jogo }, 'data', 'asc' ]
+        ],
         include: [
           { model: Seleção, as: 's1'},
           { model: Seleção, as: 's2'},
@@ -954,6 +958,22 @@ module.exports = {
       var finais = [];
 
       for (var i=0; i < palpites.length; i++) {
+
+        var pontuação = await PontuaçãoJogo.findOne({
+          where: {
+            userId: decoded.id,
+            jogoId: palpites[i].jogoId
+          }
+        });
+
+        if (!pontuação) {
+          var pontos = 0;
+        } else {
+          var pontos = pontuação.pontos;
+        }
+
+        palpites[i].dataValues.pontos = pontos;
+
         if (palpites[i].jogoId > 0 && palpites[i].jogoId < 49) {
           grupos.push(palpites[i])
         } else if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
