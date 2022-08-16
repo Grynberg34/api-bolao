@@ -10,8 +10,10 @@ router.get('/', passport.authenticate('jwt', {session: false}), authController.c
     }
 );
 
-router.post('/definir-resultado', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.definirResultadoJogo);
+router.post('/definir-resultado-grupos', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.definirResultadoJogoGrupo);
 
 router.post('/resetar-resultado', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.resetarResultadoJogo);
+
+router.post('/classificados-oitavas', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.pontuarClassificadosOitavas);
 
 module.exports = router;

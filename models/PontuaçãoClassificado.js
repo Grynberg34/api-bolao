@@ -1,7 +1,7 @@
 const connection = require('../config/database');
 const { DataTypes } = require('sequelize');
 const User = require('./User');
-const Classificado = require('./Classificado');
+const Seleção = require('./Seleção');
 
 const PontuaçãoClassificado = connection.define('PontuaçãoClassificado', {
   id: { 
@@ -19,7 +19,7 @@ const PontuaçãoClassificado = connection.define('PontuaçãoClassificado', {
   tableName: 'pontuações_classificados'
 });
 
-PontuaçãoClassificado.belongsTo(Classificado, {foreignKey: 'classificadoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
+PontuaçãoClassificado.belongsTo(Seleção, {foreignKey: 'classificadoId', onUpdate: 'cascade', onDelete: 'CASCADE'});
 PontuaçãoClassificado.belongsTo(User, {foreignKey: 'userId', onUpdate: 'cascade', onDelete: 'CASCADE'});
 
 module.exports = PontuaçãoClassificado;
