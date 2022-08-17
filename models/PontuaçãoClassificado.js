@@ -15,6 +15,10 @@ const PontuaçãoClassificado = connection.define('PontuaçãoClassificado', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  fase: { 
+    type: DataTypes.STRING,
+    allowNull: false
+  },
 },{
   tableName: 'pontuações_classificados'
 });

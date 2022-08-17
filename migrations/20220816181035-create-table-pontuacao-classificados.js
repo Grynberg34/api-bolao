@@ -14,6 +14,10 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      fase: { 
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       classificadoId: {
         type: DataTypes.INTEGER,
         allowNull: true,

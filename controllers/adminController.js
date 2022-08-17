@@ -1,14 +1,14 @@
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Jogo = require('../models/Jogo');
-const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
 const PontuaçãoJogo = require('../models/PontuaçãoJogo');
+const PontuaçãoPrêmio = require('../models/PontuaçãoPrêmio');
 const PalpitePrêmio = require('../models/PalpitePrêmio');
 const PontuaçãoClassificado = require('../models/PontuaçãoClassificado');
+const Prêmio = require('../models/Prêmio');
 
 module.exports = {
-    definirResultadoJogoGrupo: async function (req,res) {
+    definirResultadoJogoGrupos: async function (req,res) {
         var id = req.body.id;
         var s1_placar = req.body.s1_placar;
         var s2_placar = req.body.s2_placar;
@@ -40,17 +40,17 @@ module.exports = {
             var pontos = 0;
             
             if (palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar === jogo.s2_placar) { 
-                pontos = 10;
-            } else if ((palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s1_placar > jogo.s2_placar)) {
-                pontos = 7;
-            } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar === jogo.s2_placar) && (jogo.s2_placar > jogo.s1_placar)) {
-                pontos = 7;
+                pontos = 20;
+            } else if ((palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s1_placar > jogo.s2_placar) && (palpites[i].s1_placar > palpites[i].s2_placar)) {
+                pontos = 14;
+            } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar === jogo.s2_placar) && (jogo.s2_placar > jogo.s1_placar) && (palpites[i].s2_placar > palpites[i].s1_placar)) {
+                pontos = 14;
             } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s1_placar > jogo.s2_placar) && (palpites[i].s1_placar > palpites[i].s2_placar)) {
-                pontos = 5;
+                pontos = 10;
             } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s2_placar > jogo.s1_placar) && (palpites[i].s2_placar > palpites[i].s1_placar)) {
-                pontos = 5;
+                pontos = 10;
             } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s1_placar === jogo.s2_placar) && (palpites[i].s1_placar === palpites[i].s2_placar)) {
-                pontos = 5;
+                pontos = 10;
             } else {
                 pontos = 0;
             }
@@ -116,8 +116,6 @@ module.exports = {
 
         for (var i=0; i < users.length; i++) {
 
-            console.log(users[i].id)
-
             var palpites = await PalpiteJogo.findAll({
                 where: {
                     userId: users[i].id
@@ -125,8 +123,6 @@ module.exports = {
             })
 
             var palpites_oitavas = [];
-
-            console.log(palpites)
 
             for (var e=0; e < palpites.length; e++) {
                 if (palpites[e].jogoId > 48 && palpites[e].jogoId < 57) {
@@ -145,16 +141,18 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 50,
+                            fase: '16',
                             classificadoId: palpites_classificados[e]
                         })
 
                     } else {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 25,
+                            fase: '16',
                             classificadoId: palpites_classificados[e]
                         })
                     }
@@ -166,13 +164,13 @@ module.exports = {
                 if (oitavas[e].s1_id === palpites_oitavas[e].s1_id && oitavas[e].s2_id === palpites_oitavas[e].s2_id ) {
 
                     if (oitavas[e].s1_id === users[i].campeãoId || oitavas[e].s2_id === users[i].campeãoId ) {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: oitavas[e].id,
                             userId: users[i].id,
                             pontos: 100
                         })
                     } else {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: oitavas[e].id,
                             userId: users[i].id,
                             pontos: 50
@@ -222,8 +220,6 @@ module.exports = {
 
         for (var i=0; i < users.length; i++) {
 
-            console.log(users[i].id)
-
             var palpites = await PalpiteJogo.findAll({
                 where: {
                     userId: users[i].id
@@ -231,8 +227,6 @@ module.exports = {
             })
 
             var palpites_quartas = [];
-
-            console.log(palpites)
 
             for (var e=0; e < palpites.length; e++) {
                 if (palpites[e].jogoId > 56 && palpites[e].jogoId < 61) {
@@ -251,16 +245,18 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 100,
+                            fase: '8',
                             classificadoId: palpites_classificados[e]
                         })
 
                     } else {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 50,
+                            fase: '8',
                             classificadoId: palpites_classificados[e]
                         })
                     }
@@ -272,13 +268,13 @@ module.exports = {
                 if (quartas[e].s1_id === palpites_quartas[e].s1_id && quartas[e].s2_id === palpites_quartas[e].s2_id ) {
 
                     if (quartas[e].s1_id === users[i].campeãoId || quartas[e].s2_id === users[i].campeãoId ) {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: quartas[e].id,
                             userId: users[i].id,
                             pontos: 200
                         })
                     } else {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: quartas[e].id,
                             userId: users[i].id,
                             pontos: 100
@@ -328,8 +324,6 @@ module.exports = {
 
         for (var i=0; i < users.length; i++) {
 
-            console.log(users[i].id)
-
             var palpites = await PalpiteJogo.findAll({
                 where: {
                     userId: users[i].id
@@ -337,8 +331,6 @@ module.exports = {
             })
 
             var palpites_semis = [];
-
-            console.log(palpites)
 
             for (var e=0; e < palpites.length; e++) {
                 if (palpites[e].jogoId > 60 && palpites[e].jogoId < 63) {
@@ -357,16 +349,18 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 200,
+                            fase: '4',
                             classificadoId: palpites_classificados[e]
                         })
 
                     } else {
-                        PontuaçãoClassificado.create({
+                        await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 100,
+                            fase: '4',
                             classificadoId: palpites_classificados[e]
                         })
                     }
@@ -378,13 +372,13 @@ module.exports = {
                 if (semis[e].s1_id === palpites_semis[e].s1_id && semis[e].s2_id === palpites_semis[e].s2_id ) {
 
                     if (semis[e].s1_id === users[i].campeãoId || semis[e].s2_id === users[i].campeãoId ) {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: semis[e].id,
                             userId: users[i].id,
                             pontos: 400
                         })
                     } else {
-                        PontuaçãoJogo.create({
+                        await PontuaçãoJogo.create({
                             jogoId: semis[e].id,
                             userId: users[i].id,
                             pontos: 200
@@ -394,6 +388,158 @@ module.exports = {
                 }
             }
             
+        }
+        
+        return res.status(201).json("Pontuação de classificados concluída com sucesso.")
+    },
+    pontuarClassificadosFinal: async function (req,res) {
+        
+        var jogos = await Jogo.findAll();
+
+        var semis = [];
+
+        var final = await Jogo.findByPk(64);
+
+        var terceiro = await Jogo.findByPk(63);
+
+        var classificados_final = [final.s1_id, final.s2_id];
+
+        var classificados_terceiro = [terceiro.s1_id, terceiro.s2_id];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id > 60 && jogos[i].id < 63) {
+                semis.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < semis.length; i++) {
+            if (semis[i].s1_id === null || semis[i].s2_id === null) {
+                return res.status(400).json("Jogos das semis ainda não foram finalizados.")
+            }
+        }
+
+        var users = await User.findAll({where: {
+            enviado: true
+        }})
+
+        for (var i=0; i < users.length; i++) {
+
+            var palpite_terceiro = await PalpiteJogo.findOne({
+                where: {
+                    userId: users[i].id,
+                    jogoId: 63
+                }
+            });
+
+            
+            var palpite_final = await PalpiteJogo.findOne({
+                where: {
+                    userId: users[i].id,
+                    jogoId: 64
+                }
+            });
+
+
+            var palpites_classificados_final = [palpite_final.s1_id, palpite_final.s2_id];
+            var palpites_classificados_terceiro = [palpite_terceiro.s1_id, palpite_terceiro.s2_id];
+
+            for (var e=0; e < palpites_classificados_final.length; e++) {
+
+                if (classificados_final.includes(palpites_classificados_final[e])) {
+
+                    if (users[i].campeãoId === palpites_classificados_final[e]) {
+                        await PontuaçãoClassificado.create({
+                            userId: users[i].id,
+                            pontos: 400,
+                            fase: '2',
+                            classificadoId: palpites_classificados_final[e]
+                        })
+
+                    } else {
+                        await PontuaçãoClassificado.create({
+                            userId: users[i].id,
+                            pontos: 200,
+                            fase: '2',
+                            classificadoId: palpites_classificados_final[e]
+                        })
+                    }
+
+                }
+            }
+
+            for (var e=0; e < palpites_classificados_terceiro.length; e++) {
+
+                if (classificados_terceiro.includes(palpites_classificados_terceiro[e])) {
+
+                    if (users[i].campeãoId === palpites_classificados_terceiro[e]) {
+                        await PontuaçãoClassificado.create({
+                            userId: users[i].id,
+                            pontos: 400,
+                            fase: '2',
+                            classificadoId: palpites_classificados_terceiro[e]
+                        })
+
+                    } else {
+                        await PontuaçãoClassificado.create({
+                            userId: users[i].id,
+                            pontos: 200,
+                            fase: '2',
+                            classificadoId: palpites_classificados_terceiro[e]
+                        })
+                    }
+
+                }
+            }
+
+            if (final.s1_id === palpite_final.s1_id && final.s2_id === palpite_final.s2_id) {
+                if (users[i].campeãoId === palpite_final.s1_id || users[i].campeãoId === palpite_final.s2_id) {
+                    PontuaçãoJogo.create({
+                        jogoId: final.id,
+                        userId: users[i].id,
+                        pontos: 800
+                    })
+                } else {
+                    PontuaçãoJogo.create({
+                        jogoId: final.id,
+                        userId: users[i].id,
+                        pontos: 400
+                    })
+                }
+            }
+
+            if (terceiro.s1_id === palpite_terceiro.s1_id && terceiro.s2_id === palpite_terceiro.s2_id) {
+                if (users[i].campeãoId === palpite_terceiro.s1_id || users[i].campeãoId === palpite_terceiro.s2_id) {
+                    await PontuaçãoJogo.create({
+                        jogoId: terceiro.id,
+                        userId: users[i].id,
+                        pontos: 800
+                    })
+                } else {
+                    await PontuaçãoJogo.create({
+                        jogoId: terceiro.id,
+                        userId: users[i].id,
+                        pontos: 400
+                    })
+                }
+            }
+
+            if (final.s1_placar > final.s2_placar) {
+                var campeão = final.s1_id;
+            } else if (final.s2_placar > final.s1_placar) {
+                var campeão = final.s2_id;
+            } else {
+                var campeão = final.vencedor;
+            }
+
+            if (users[i].campeãoId === campeão) {
+                await PontuaçãoClassificado.create({
+                    userId: users[i].id,
+                    pontos: 400,
+                    fase: '1',
+                    classificadoId: campeão
+                })
+            }
+
         }
         
         return res.status(201).json("Pontuação de classificados concluída com sucesso.")
@@ -460,5 +606,52 @@ module.exports = {
                 }
             }
         }
+    },
+    pontuarPrêmios: async function (req,res) {
+        var users = await User.findAll({where: {
+            enviado: true
+        }})
+
+        var palpites_prêmios
+
+        var bola_ouro = await Prêmio.findByPk(1);
+
+        var chuteira_ouro = await Prêmio.findByPk(2);
+
+        var palpites_bola_ouro = await PalpitePrêmio.findAll({
+            where: {
+                prêmioId: 1
+            }
+        });
+
+        var palpites_chuteira_ouro = await PalpitePrêmio.findAll({
+            where: {
+                prêmioId: 2
+            }
+        });
+
+        for (var i=0; i < palpites_bola_ouro.length; i++) {
+            if (palpites_bola_ouro[i].ganhador === bola_ouro.ganhador) {
+                await PontuaçãoPrêmio.create({
+                    pontos: 400,
+                    userId: palpites_bola_ouro[i].userId,
+                    prêmioId: 1
+                })
+            }
+        }
+
+        for (var i=0; i < palpites_chuteira_ouro.length; i++) {
+            if (palpites_chuteira_ouro[i].ganhador === chuteira_ouro.ganhador) {
+                await PontuaçãoPrêmio.create({
+                    pontos: 400,
+                    userId: palpites_chuteira_ouro[i].userId,
+                    prêmioId: 2
+                })
+            }
+        }
+
+        
+        return res.status(201).json("Pontuação de prêmiações concluída com sucesso.")
+
     }
 }

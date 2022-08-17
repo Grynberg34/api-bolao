@@ -5,6 +5,8 @@ const Seleção = require('../models/Seleção');
 const PalpiteJogo = require('../models/PalpiteJogo');
 const PalpitePrêmio = require('../models/PalpitePrêmio');
 const PontuaçãoJogo = require('../models/PontuaçãoJogo');
+const PontuaçãoClassificado = require('../models/PontuaçãoClassificado');
+const PontuaçãoPrêmio = require('../models/PontuaçãoPrêmio');
 
 var jwtOptions = {};
 jwtOptions.secretOrKey = process.env.JWT_KEY;
@@ -1000,10 +1002,387 @@ module.exports = {
         }
       })
 
-      bolao.push(grupos, oitavas, quartas, semis, finais, user, prêmios);
+      
+      //PONTOS JOGOS
+      
+      var pontos_jogos = await PontuaçãoJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+      
+      var pontos_jogos_total = 0
+      
+      for (var i=0; i < pontos_jogos.length; i++) {
+        pontos_jogos_total= pontos_jogos_total + pontos_jogos[i].pontos
+      }
+      
+      
+      // OITAVAS 
+      
+      var pontos_oitavas = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: decoded.id,
+          fase: '16'
+        }
+      });
+      
+      var pontos_oitavas_total = 0;
+      
+      for (var i=0; i < pontos_oitavas.length; i++) {
+        pontos_oitavas_total = pontos_oitavas_total + pontos_oitavas[i].pontos
+      }
+      
+      // QUARTAS
+
+      var pontos_quartas = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: decoded.id,
+          fase: '8'
+        }
+      });
+      
+      var pontos_quartas_total = 0;
+      
+      for (var i=0; i < pontos_quartas.length; i++) {
+        pontos_quartas_total = pontos_quartas_total + pontos_quartas[i].pontos
+      }
+
+      // SEMIS
+      
+      var pontos_semis = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: decoded.id,
+          fase: '4'
+        }
+      });
+
+      var pontos_semis_total = 0;
+
+      for (var i=0; i < pontos_semis.length; i++) {
+        pontos_semis_total = pontos_semis_total + pontos_semis[i].pontos
+      }
+
+      // FINAIS
+      
+      var pontos_finais = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: decoded.id,
+          fase: '2'
+        }
+      });
+      
+      var pontos_finais_total = 0;
+      
+      for (var i=0; i < pontos_finais.length; i++) {
+        pontos_finais_total = pontos_finais_total + pontos_finais[i].pontos
+      }
+      
+      // CAMPEÃO
+      
+      var pontos_campeão = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: decoded.id,
+          fase: '1'
+        }
+      });
+      
+      var pontos_campeão_total = 0;
+      
+      for (var i=0; i < pontos_campeão.length; i++) {
+        pontos_campeão_total = pontos_campeão_total + pontos_campeão[i].pontos
+      }
+
+      // PRÊMIOS
+      
+      var pontos_prêmios = await PontuaçãoPrêmio.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+      
+      
+      var pontos_prêmios_total = 0;
+      
+      for (var i=0; i < pontos_prêmios.length; i++) {
+        pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[i].pontos;
+      }
+
+      var pontos = {
+        jogos: pontos_jogos_total,
+        oitavas: pontos_oitavas_total,
+        quartas: pontos_quartas_total,
+        semis: pontos_semis_total,
+        finais: pontos_finais_total,
+        campeão: pontos_campeão_total,
+        prêmios: pontos_prêmios_total,
+        pontos: pontos_jogos_total + pontos_oitavas_total + pontos_quartas_total + pontos_semis_total + pontos_finais_total + pontos_campeão_total + pontos_prêmios_total
+      }
+
+      
+      bolao.push(grupos, oitavas, quartas, semis, finais, user, prêmios, pontos);
 
       return res.status(201).json(bolao)
     
     })
-  }
+  },
+  mostrarRanking: async function (req,res) {
+
+    var users = await User.findAll({where: {
+      enviado: true
+    }});
+    
+
+    for (var i=0; i < users.length; i++) {
+
+      //PONTOS JOGOS
+      
+      var pontos_jogos = await PontuaçãoJogo.findAll({
+        where: {
+          userId: users[i].id
+        }
+      });
+      
+      var pontos_jogos_total = 0
+      
+      for (var e=0; e < pontos_jogos.length; e++) {
+        pontos_jogos_total= pontos_jogos_total + pontos_jogos[e].pontos
+      }
+      
+      
+      // CLASSIFICADOS
+      
+      var pontos_classificados = await PontuaçãoClassificado.findAll({
+        where: {
+          userId: users[i].id,
+        }
+      });
+      
+      var pontos_classificados_total = 0;
+      
+      for (var e=0; e < pontos_classificados.length; e++) {
+        pontos_classificados_total = pontos_classificados_total + pontos_classificados[e].pontos
+      }
+      
+      // PRÊMIOS
+      
+      var pontos_prêmios = await PontuaçãoPrêmio.findAll({
+        where: {
+          userId: users[i].id
+        }
+      });
+      
+      
+      var pontos_prêmios_total = 0;
+      
+      for (var e=0; e < pontos_prêmios.length; e++) {
+        pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[e].pontos;
+      }
+
+      var pontos = pontos_jogos_total + pontos_classificados_total + pontos_prêmios_total;
+
+      users[i].dataValues.pontos = pontos;
+
+    }
+
+    users.sort((a, b) => parseFloat(b.dataValues.pontos) - parseFloat(a.dataValues.pontos));
+
+    return res.status(201).json(users)
+
+  },
+  mostrarPalpitesPorId: async function (req,res) {
+    var id = req.params.id;
+
+    console.log(id)
+      
+    var palpites = await PalpiteJogo.findAll({
+      where: {
+        userId: id
+      },
+      order: [
+        [{ model: Jogo }, 'data', 'asc' ]
+      ],
+      include: [
+        { model: Seleção, as: 's1'},
+        { model: Seleção, as: 's2'},
+        { model: Jogo, include: [
+          {model: Seleção, as: 's1'},
+          {model: Seleção, as: 's2'}
+        ]},
+      ],
+    });
+
+    var bolao = [];
+    var grupos = [];
+    var oitavas = [];
+    var quartas =[];
+    var semis = [];
+    var finais = [];
+
+    for (var i=0; i < palpites.length; i++) {
+
+      var pontuação = await PontuaçãoJogo.findOne({
+        where: {
+          userId: id,
+          jogoId: palpites[i].jogoId
+        }
+      });
+
+      if (!pontuação) {
+        var pontos = 0;
+      } else {
+        var pontos = pontuação.pontos;
+      }
+
+      palpites[i].dataValues.pontos = pontos;
+
+      if (palpites[i].jogoId > 0 && palpites[i].jogoId < 49) {
+        grupos.push(palpites[i])
+      } else if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
+        oitavas.push(palpites[i])
+      } else if (palpites[i].jogoId > 56 && palpites[i].jogoId < 61) {
+        quartas.push(palpites[i])
+      } else if (palpites[i].jogoId > 60 && palpites[i].jogoId < 63) {
+        semis.push(palpites[i])
+      } else if (palpites[i].jogoId > 62 && palpites[i].jogoId < 65) {
+        finais.push(palpites[i])
+      }
+    }
+
+    var user = await User.findOne({
+      where: {
+        id: id
+      },
+      include: Seleção
+    });
+
+    var prêmios = await PalpitePrêmio.findAll({
+      where: {
+        userId: id
+      }
+    })
+
+    
+    //PONTOS JOGOS
+    
+    var pontos_jogos = await PontuaçãoJogo.findAll({
+      where: {
+        userId: id
+      }
+    });
+    
+    var pontos_jogos_total = 0
+    
+    for (var i=0; i < pontos_jogos.length; i++) {
+      pontos_jogos_total= pontos_jogos_total + pontos_jogos[i].pontos
+    }
+    
+    
+    // OITAVAS 
+    
+    var pontos_oitavas = await PontuaçãoClassificado.findAll({
+      where: {
+        userId: id,
+        fase: '16'
+      }
+    });
+    
+    var pontos_oitavas_total = 0;
+    
+    for (var i=0; i < pontos_oitavas.length; i++) {
+      pontos_oitavas_total = pontos_oitavas_total + pontos_oitavas[i].pontos
+    }
+    
+    // QUARTAS
+
+    var pontos_quartas = await PontuaçãoClassificado.findAll({
+      where: {
+        userId: id,
+        fase: '8'
+      }
+    });
+    
+    var pontos_quartas_total = 0;
+    
+    for (var i=0; i < pontos_quartas.length; i++) {
+      pontos_quartas_total = pontos_quartas_total + pontos_quartas[i].pontos
+    }
+
+    // SEMIS
+    
+    var pontos_semis = await PontuaçãoClassificado.findAll({
+      where: {
+        userId: id,
+        fase: '4'
+      }
+    });
+
+    var pontos_semis_total = 0;
+
+    for (var i=0; i < pontos_semis.length; i++) {
+      pontos_semis_total = pontos_semis_total + pontos_semis[i].pontos
+    }
+
+    // FINAIS
+    
+    var pontos_finais = await PontuaçãoClassificado.findAll({
+      where: {
+        userId: id,
+        fase: '2'
+      }
+    });
+    
+    var pontos_finais_total = 0;
+    
+    for (var i=0; i < pontos_finais.length; i++) {
+      pontos_finais_total = pontos_finais_total + pontos_finais[i].pontos
+    }
+    
+    // CAMPEÃO
+    
+    var pontos_campeão = await PontuaçãoClassificado.findAll({
+      where: {
+        userId: id,
+        fase: '1'
+      }
+    });
+    
+    var pontos_campeão_total = 0;
+    
+    for (var i=0; i < pontos_campeão.length; i++) {
+      pontos_campeão_total = pontos_campeão_total + pontos_campeão[i].pontos
+    }
+
+    // PRÊMIOS
+    
+    var pontos_prêmios = await PontuaçãoPrêmio.findAll({
+      where: {
+        userId: id
+      }
+    });
+    
+    
+    var pontos_prêmios_total = 0;
+    
+    for (var i=0; i < pontos_prêmios.length; i++) {
+      pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[i].pontos;
+    }
+
+    var pontos = {
+      jogos: pontos_jogos_total,
+      oitavas: pontos_oitavas_total,
+      quartas: pontos_quartas_total,
+      semis: pontos_semis_total,
+      finais: pontos_finais_total,
+      campeão: pontos_campeão_total,
+      prêmios: pontos_prêmios_total,
+      pontos: pontos_jogos_total + pontos_oitavas_total + pontos_quartas_total + pontos_semis_total + pontos_finais_total + pontos_campeão_total + pontos_prêmios_total
+    }
+
+    
+    bolao.push(grupos, oitavas, quartas, semis, finais, user, prêmios, pontos);
+
+    return res.status(201).json(bolao)
+    
+  },
 }
