@@ -1504,9 +1504,22 @@ module.exports = {
       ],
     })
 
-    jogo.dataValues.palpites = palpites;
+    var users_not_done = await User.findAll({
+      where: {
+        enviado: false,
+        pix: true,
+        verificado: true
+      }
+    });
+    
+    for (var i=0; i < palpites.length; i++) {
 
-    console.log(jogo.dataValues.palpites.s1)
+      if (palpites[i].User.enviado === false) {
+        palpites.splice(i, users_not_done.length)
+      }
+    }
+
+    jogo.dataValues.palpites = palpites;
 
     return res.status(201).json(jogo)
   },
@@ -1547,11 +1560,9 @@ module.exports = {
       order: [
         [{ model: User}, 'nome', 'asc' ]
       ],
-    })
+    });
 
     jogo.dataValues.palpites = palpites;
-
-    console.log(jogo.dataValues.palpites.s1)
 
     return res.status(201).json(jogo)
   }
