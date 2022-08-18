@@ -475,7 +475,7 @@ module.exports = {
                         await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 400,
-                            fase: '2',
+                            fase: '2.5',
                             classificadoId: palpites_classificados_terceiro[e]
                         })
 
@@ -483,7 +483,7 @@ module.exports = {
                         await PontuaçãoClassificado.create({
                             userId: users[i].id,
                             pontos: 200,
-                            fase: '2',
+                            fase: '2.5',
                             classificadoId: palpites_classificados_terceiro[e]
                         })
                     }
@@ -534,7 +534,7 @@ module.exports = {
             if (users[i].campeãoId === campeão) {
                 await PontuaçãoClassificado.create({
                     userId: users[i].id,
-                    pontos: 400,
+                    pontos: 800,
                     fase: '1',
                     classificadoId: campeão
                 })

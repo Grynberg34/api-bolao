@@ -40,4 +40,10 @@ router.get('/ranking', passport.authenticate('jwt', {session: false}), authContr
 
 router.get('/ranking/:id', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpitesPorId);
 
+router.get('/todos-jogos', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarTodosJogos);
+
+router.get('/todos-jogos/grupos/:id', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpitesPorJogo);
+
+router.get('/todos-jogos/fase-final/:id', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpitesPorJogoFaseFinal);
+
 module.exports = router;
