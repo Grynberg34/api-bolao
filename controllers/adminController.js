@@ -653,5 +653,321 @@ module.exports = {
         
         return res.status(201).json("Pontuação de prêmiações concluída com sucesso.")
 
+    },
+    resetarFaseGrupos: async function (req,res) {
+        var jogos = await Jogo.findAll();
+
+        var jogos_grupos = [];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id < 49) {
+                jogos_grupos.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < jogos_grupos.length; i++) {
+            await Jogo.update({
+                s1_placar: null,
+                s2_placar: null,
+            }, {
+                where: {
+                    jogoId: jogos_grupos[i].id
+                }
+            })
+        }
+
+        var pontos = await PontuaçãoJogo.findAll();
+
+        var pontos_grupos = [];
+
+        for (var i=0; i < pontos.length; i++) {
+            if (pontos[i].jogoId < 49) {
+                pontos_grupos.push(pontos[i])
+            }
+        }
+
+        for (var i=0; i < pontos_grupos.length; i++) {
+            await PontuaçãoJogo.destroy({
+                where: {
+                    id: pontos_grupos[i].id       
+                }
+            })
+        }
+    },
+    resetarOitavas: async function (req,res) {
+        var jogos = await Jogo.findAll();
+
+        var jogos_oitavas = [];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id > 48 && jogos[i].id < 57) {
+                jogos_oitavas.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < jogos_oitavas.length; i++) {
+            await Jogo.update({
+                s1_placar: null,
+                s2_placar: null,
+                s1_id: null,
+                s2_id: null,
+            }, {
+                where: {
+                    jogoId: jogos_oitavas[i].id
+                }
+            })
+        }
+
+        var pontos = await PontuaçãoJogo.findAll();
+
+        var pontos_oitavas = [];
+
+        for (var i=0; i < pontos.length; i++) {
+            if (pontos[i].jogoId > 48 && pontos[i].jogoId < 57) {
+                pontos_oitavas.push(pontos[i])
+            }
+        }
+
+        for (var i=0; i < pontos_oitavas.length; i++) {
+            await PontuaçãoJogo.destroy({
+                where: {
+                    id: pontos_oitavas[i].id       
+                }
+            })
+        }
+
+        var pontos_classificados = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '16'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados[i].id
+                }
+            })
+        }
+    },
+    resetarQuartas: async function (req,res) {
+        var jogos = await Jogo.findAll();
+
+        var jogos_quartas = [];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id > 56 && jogos[i].id < 61) {
+                jogos_quartas.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < jogos_quartas.length; i++) {
+            await Jogo.update({
+                s1_placar: null,
+                s2_placar: null,
+                s1_id: null,
+                s2_id: null,
+            }, {
+                where: {
+                    jogoId: jogos_quartas[i].id
+                }
+            })
+        }
+
+        var pontos = await PontuaçãoJogo.findAll();
+
+        var pontos_quartas = [];
+
+        for (var i=0; i < pontos.length; i++) {
+            if (pontos[i].jogoId > 56 && pontos[i].jogoId < 61) {
+                pontos_quartas.push(pontos[i])
+            }
+        }
+
+        for (var i=0; i < pontos_quartas.length; i++) {
+            await PontuaçãoJogo.destroy({
+                where: {
+                    id: pontos_quartas[i].id       
+                }
+            })
+        }
+
+        var pontos_classificados = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '8'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados[i].id
+                }
+            })
+        }
+    },
+    resetarSemis: async function (req,res) {
+        var jogos = await Jogo.findAll();
+
+        var jogos_semis = [];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id > 60 && jogos[i].id < 63) {
+                jogos_semis.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < jogos_semis.length; i++) {
+            await Jogo.update({
+                s1_placar: null,
+                s2_placar: null,
+                s1_id: null,
+                s2_id: null,
+            }, {
+                where: {
+                    jogoId: jogos_semis[i].id
+                }
+            })
+        }
+
+        var pontos = await PontuaçãoJogo.findAll();
+
+        var pontos_semis = [];
+
+        for (var i=0; i < pontos.length; i++) {
+            if (pontos[i].jogoId > 60 && pontos[i].jogoId < 63) {
+                pontos_semis.push(pontos[i])
+            }
+        }
+
+        for (var i=0; i < pontos_semis.length; i++) {
+            await PontuaçãoJogo.destroy({
+                where: {
+                    id: pontos_semis[i].id       
+                }
+            })
+        }
+
+        var pontos_classificados = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '4'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados[i].id
+                }
+            })
+        }
+    },
+    resetarFinais: async function (req,res) {
+        var jogos = await Jogo.findAll();
+
+        var jogos_finais = [];
+
+        for (var i=0; i < jogos.length; i++) {
+            if (jogos[i].id > 62 && jogos[i].id < 65) {
+                jogos_finais.push(jogos[i])
+            }
+        }
+
+        for (var i=0; i < jogos_finais.length; i++) {
+            await Jogo.update({
+                s1_placar: null,
+                s2_placar: null,
+                s1_id: null,
+                s2_id: null,
+            }, {
+                where: {
+                    jogoId: jogos_finais[i].id
+                }
+            })
+        }
+
+        var pontos = await PontuaçãoJogo.findAll();
+
+        var pontos_finais = [];
+
+        for (var i=0; i < pontos.length; i++) {
+            if (pontos[i].jogoId > 60 && pontos[i].jogoId < 63) {
+                pontos_finais.push(pontos[i])
+            }
+        }
+
+        for (var i=0; i < pontos_finais.length; i++) {
+            await PontuaçãoJogo.destroy({
+                where: {
+                    id: pontos_finais[i].id       
+                }
+            })
+        }
+
+        var pontos_classificados_final = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '2'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados_final.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados_final[i].id
+                }
+            })
+        }
+
+        var pontos_classificados_terceiro = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '2.5'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados_terceiro.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados_terceiro[i].id
+                }
+            })
+        }
+
+        var pontos_classificados_campeão = await PontuaçãoClassificado.findAll({
+            where: {
+                fase: '1'
+            }
+        })
+
+        for (var i=0; i < pontos_classificados_campeão.length; i++) {
+            await PontuaçãoClassificado.destroy({
+                where: {
+                    id: pontos_classificados_campeão[i].id
+                }
+            })
+        }
+
+    },
+    resetarPrêmios: async function (req,res) {
+        var prêmios = await Prêmio.findAll();
+
+        for (var i=0; i < prêmios.length; i++) {
+            await Prêmio.update({
+                ganhador: null,
+            }, {
+                where: {
+                    id: prêmios[i].id
+                }
+            })
+        }
+
+        var pontuação_prêmios = await PontuaçãoPrêmio.findAll();
+
+        for (var i=0; i < pontuação_prêmios.length; i++) {
+            await PontuaçãoPrêmio.destroy({
+                where: {
+                    id: pontuação_prêmios[i].id
+                }
+            })
+        }
     }
 }
