@@ -973,5 +973,92 @@ module.exports = {
                 }
             })
         }
+    },
+    resetarUsuário: async function (req,res) {
+        var id = req.body.id;
+    
+        await User.update({
+            campeãoId: null,
+            enviado: false,
+        }, {
+            where: {
+                id: id
+            }
+        })
+    
+        var palpites = await PalpiteJogo.findAll({
+          where: {
+            userId: id
+          }
+        })
+    
+        for (var i = 0; i < palpites.length; i++) {
+          await PalpiteJogo.destroy({
+            where: {
+              id: palpites[i].id
+            }
+          })
+        }
+    
+        var palpites_prêmios = await PalpitePrêmio.findAll({
+          where: {
+            userId: id
+          }
+        })
+    
+        for (var i = 0; i < palpites_prêmios.length; i++) {
+          await PalpitePrêmio.destroy({
+            where: {
+              id: palpites_prêmios[i].id
+            }
+          })
+        }
+    
+        var pontuações = await PontuaçãoJogo.findAll({
+          where: {
+            userId: id
+          }
+        })
+    
+        for (var i = 0; i < pontuações.length; i++) {
+          await PontuaçãoJogo.destroy({
+            where: {
+              id: pontuações[i].id
+            }
+          })
+        }
+    
+        var pontuações_prêmios = await PontuaçãoPrêmio.findAll({
+          where: {
+            userId: id
+          }
+        })
+    
+        for (var i = 0; i < pontuações_prêmios.length; i++) {
+          await PontuaçãoPrêmio.destroy({
+            where: {
+              id: pontuações_prêmios[i].id
+            }
+          })
+        }
+    
+    
+        var pontuações_classificados = await PontuaçãoClassificado.findAll({
+          where: {
+            userId: id
+          }
+        })
+    
+        for (var i = 0; i < pontuações_classificados.length; i++) {
+          await PontuaçãoClassificado.destroy({
+            where: {
+              id: pontuações_classificados[i].id
+            }
+          })
+        }
+    
+    
+        return res.status(201).json("Palpites e pontos do usuário deletados")
+    
     }
 }

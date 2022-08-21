@@ -38,4 +38,6 @@ router.get('/resetar-finais', passport.authenticate('jwt', {session: false}), au
 
 router.get('/resetar-premios', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.resetarPrêmios);
 
+router.post('/resetar-usuario', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.resetarUsuário);
+
 module.exports = router;
