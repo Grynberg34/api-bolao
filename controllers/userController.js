@@ -258,6 +258,126 @@ module.exports = {
 
     });
   },
+  checarOitavas: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesOitavas = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 48 && palpites[i].jogoId < 57) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesOitavas.push(palpites[i])
+        }
+      }
+
+      if (palpitesOitavas.length === 8) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  checarQuartas: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesQuartas = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 56 && palpites[i].jogoId < 61) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesQuartas.push(palpites[i])
+        }
+      }
+
+      if (palpitesQuartas.length === 4) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  checarSemis: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesSemis = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 60 && palpites[i].jogoId < 63) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesSemis.push(palpites[i])
+        }
+      }
+
+      if (palpitesSemis.length === 2) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
+  checarFinais: async function (req, res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({
+        where: {
+          userId: decoded.id
+        }
+      });
+
+      var palpitesSemis = [];
+
+      var done = false;
+
+      for (var i=0; i < palpites.length; i++) {
+        if ((palpites[i].jogoId > 62 && palpites[i].jogoId < 65) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
+          palpitesSemis.push(palpites[i])
+        }
+      }
+
+      var palpites_prêmios = await PalpitePrêmio.findAll({where: {
+        userId: decoded.id
+      }});
+
+      if (palpitesSemis.length === 2 && palpites_prêmios.length === 2) {
+        done = true;
+      }
+
+      return res.status(201).json(done)
+
+    });
+  },
   mostrarJogosOitavas: async function (req, res) {
     var token = req.header('authorization').substr(7);
 
@@ -406,35 +526,6 @@ module.exports = {
 
     });
   },
-  checarOitavas: async function (req, res) {
-    var token = req.header('authorization').substr(7);
-
-    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
-
-      var palpites = await PalpiteJogo.findAll({
-        where: {
-          userId: decoded.id
-        }
-      });
-
-      var palpitesOitavas = [];
-
-      var done = false;
-
-      for (var i=0; i < palpites.length; i++) {
-        if ((palpites[i].jogoId > 48 && palpites[i].jogoId < 57) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
-          palpitesOitavas.push(palpites[i])
-        }
-      }
-
-      if (palpitesOitavas.length === 8) {
-        done = true;
-      }
-
-      return res.status(201).json(done)
-
-    });
-  },
   mostrarJogosQuartas: async function (req,res) {
     var token = req.header('authorization').substr(7);
 
@@ -543,97 +634,6 @@ module.exports = {
 
     })
 
-  },
-  checarQuartas: async function (req, res) {
-    var token = req.header('authorization').substr(7);
-
-    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
-
-      var palpites = await PalpiteJogo.findAll({
-        where: {
-          userId: decoded.id
-        }
-      });
-
-      var palpitesQuartas = [];
-
-      var done = false;
-
-      for (var i=0; i < palpites.length; i++) {
-        if ((palpites[i].jogoId > 56 && palpites[i].jogoId < 61) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
-          palpitesQuartas.push(palpites[i])
-        }
-      }
-
-      if (palpitesQuartas.length === 4) {
-        done = true;
-      }
-
-      return res.status(201).json(done)
-
-    });
-  },
-  checarSemis: async function (req, res) {
-    var token = req.header('authorization').substr(7);
-
-    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
-
-      var palpites = await PalpiteJogo.findAll({
-        where: {
-          userId: decoded.id
-        }
-      });
-
-      var palpitesSemis = [];
-
-      var done = false;
-
-      for (var i=0; i < palpites.length; i++) {
-        if ((palpites[i].jogoId > 60 && palpites[i].jogoId < 63) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
-          palpitesSemis.push(palpites[i])
-        }
-      }
-
-      if (palpitesSemis.length === 2) {
-        done = true;
-      }
-
-      return res.status(201).json(done)
-
-    });
-  },
-  checarFinais: async function (req, res) {
-    var token = req.header('authorization').substr(7);
-
-    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
-
-      var palpites = await PalpiteJogo.findAll({
-        where: {
-          userId: decoded.id
-        }
-      });
-
-      var palpitesSemis = [];
-
-      var done = false;
-
-      for (var i=0; i < palpites.length; i++) {
-        if ((palpites[i].jogoId > 62 && palpites[i].jogoId < 65) && (palpites[i].s1_placar !== null) && (palpites[i].s2_placar !== null)) {
-          palpitesSemis.push(palpites[i])
-        }
-      }
-
-      var palpites_prêmios = await PalpitePrêmio.findAll({where: {
-        userId: decoded.id
-      }});
-
-      if (palpitesSemis.length === 2 && palpites_prêmios.length === 2) {
-        done = true;
-      }
-
-      return res.status(201).json(done)
-
-    });
   },
   mostrarJogosSemis: async function (req,res) {
     var token = req.header('authorization').substr(7);
@@ -1600,6 +1600,4 @@ module.exports = {
 
     return res.status(201).json(jogo)
   }
-
-
 }

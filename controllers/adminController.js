@@ -73,6 +73,69 @@ module.exports = {
 
         return res.status(201).json("Resultado definido")
     },
+    definirResultadoJogoFaseFinal: async function (req,res) {
+        var id = req.body.id;
+        var s1_placar = req.body.s1_placar;
+        var s2_placar = req.body.s2_placar;
+
+        await Jogo.update({
+            s1_placar: s1_placar,
+            s2_placar: s2_placar
+        }, {
+            where: {
+                id: id
+            }
+        });
+
+        var jogo = await Jogo.findByPk(id);
+
+        var pontos = 0
+        
+        if (jogo.id > 48 && jogo.id < 57) {
+            pontos = 100
+        } else if (jogo.id > 56 && jogo.id < 61) {
+            pontos = 200
+        } else if (jogo.id > 60 && jogo.id < 63) {
+            pontos = 400
+        } else if (jogo.id === 63) {
+            pontos = 400
+        } else if (jogo.id === 64) {
+            pontos = 800
+        }
+
+        var palpites = await PalpiteJogo.findAll({
+            where: {
+                jogoId: id
+            }
+        });
+
+        for (var i=0; i < palpites.length; i++) {
+
+            var user = await User.findByPk(palpites[i].userId);
+
+            if (palpites[i].s1_id === jogo.s1_id && palpites[i].s2_id === jogo.s2_id && palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar=== jogo.s2_placar) {
+                if (jogo.s1_id === user.campeãoId || jogo.s2_id === user.campeãoId) {
+                    PontuaçãoJogo.update({
+                        pontos: pontos*2
+                    }, {
+                        where: {
+                            userId: palpites[i].userId,
+                            jogoId: palpites[i].jogoId
+                        }
+                    })
+                } else {
+                    PontuaçãoJogo.update({
+                        pontos: pontos
+                    }, {
+                        where: {
+                            userId: palpites[i].userId,
+                            jogoId: palpites[i].jogoId
+                        }
+                    })
+                }
+            }
+        }
+    },
     resetarResultadoJogo: async function (req,res) {
         var id = req.body.id;
 
@@ -547,69 +610,6 @@ module.exports = {
         }
         
         return res.status(201).json("Pontuação de classificados concluída com sucesso.")
-    },
-    definirResultadoJogoFaseFinal: async function (req,res) {
-        var id = req.body.id;
-        var s1_placar = req.body.s1_placar;
-        var s2_placar = req.body.s2_placar;
-
-        await Jogo.update({
-            s1_placar: s1_placar,
-            s2_placar: s2_placar
-        }, {
-            where: {
-                id: id
-            }
-        });
-
-        var jogo = await Jogo.findByPk(id);
-
-        var pontos = 0
-        
-        if (jogo.id > 48 && jogo.id < 57) {
-            pontos = 100
-        } else if (jogo.id > 56 && jogo.id < 61) {
-            pontos = 200
-        } else if (jogo.id > 60 && jogo.id < 63) {
-            pontos = 400
-        } else if (jogo.id === 63) {
-            pontos = 400
-        } else if (jogo.id === 64) {
-            pontos = 800
-        }
-
-        var palpites = await PalpiteJogo.findAll({
-            where: {
-                jogoId: id
-            }
-        });
-
-        for (var i=0; i < palpites.length; i++) {
-
-            var user = await User.findByPk(palpites[i].userId);
-
-            if (palpites[i].s1_id === jogo.s1_id && palpites[i].s2_id === jogo.s2_id && palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar=== jogo.s2_placar) {
-                if (jogo.s1_id === user.campeãoId || jogo.s2_id === user.campeãoId) {
-                    PontuaçãoJogo.update({
-                        pontos: pontos*2
-                    }, {
-                        where: {
-                            userId: palpites[i].userId,
-                            jogoId: palpites[i].jogoId
-                        }
-                    })
-                } else {
-                    PontuaçãoJogo.update({
-                        pontos: pontos
-                    }, {
-                        where: {
-                            userId: palpites[i].userId,
-                            jogoId: palpites[i].jogoId
-                        }
-                    })
-                }
-            }
-        }
     },
     pontuarPrêmios: async function (req,res) {
         var users = await User.findAll({where: {
