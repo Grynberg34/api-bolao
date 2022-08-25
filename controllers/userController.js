@@ -953,7 +953,7 @@ module.exports = {
       });
 
       var bolao = [];
-      var grupos = [];
+      var jogos_grupos = [];
       var oitavas = [];
       var quartas =[];
       var semis = [];
@@ -977,7 +977,7 @@ module.exports = {
         palpites[i].dataValues.pontos = pontos;
 
         if (palpites[i].jogoId > 0 && palpites[i].jogoId < 49) {
-          grupos.push(palpites[i])
+          jogos_grupos.push(palpites[i])
         } else if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
           oitavas.push(palpites[i])
         } else if (palpites[i].jogoId > 56 && palpites[i].jogoId < 61) {
@@ -987,6 +987,27 @@ module.exports = {
         } else if (palpites[i].jogoId > 62 && palpites[i].jogoId < 65) {
           finais.push(palpites[i])
         }
+      }
+
+      var grupos = [];
+
+      var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+      for (var i=0; i <letras.length; i++) {
+        var grupo = {
+          letra: letras[i],
+          palpites: []
+        }
+
+        for (var e=0; e < jogos_grupos.length; e++) {
+
+          if (letras[i] === jogos_grupos[e].Jogo.grupo) {
+            grupo.palpites.push(jogos_grupos[e])
+          }
+        }
+
+        grupos.push(grupo);
+
       }
 
       var user = await User.findOne({
@@ -1228,7 +1249,7 @@ module.exports = {
     });
 
     var bolao = [];
-    var grupos = [];
+    var jogos_grupos = [];
     var oitavas = [];
     var quartas =[];
     var semis = [];
@@ -1252,7 +1273,7 @@ module.exports = {
       palpites[i].dataValues.pontos = pontos;
 
       if (palpites[i].jogoId > 0 && palpites[i].jogoId < 49) {
-        grupos.push(palpites[i])
+        jogos_grupos.push(palpites[i])
       } else if (palpites[i].jogoId > 48 && palpites[i].jogoId < 57) {
         oitavas.push(palpites[i])
       } else if (palpites[i].jogoId > 56 && palpites[i].jogoId < 61) {
@@ -1262,6 +1283,27 @@ module.exports = {
       } else if (palpites[i].jogoId > 62 && palpites[i].jogoId < 65) {
         finais.push(palpites[i])
       }
+    }
+
+    var grupos = [];
+
+    var letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+    for (var i=0; i <letras.length; i++) {
+      var grupo = {
+        letra: letras[i],
+        palpites: []
+      }
+
+      for (var e=0; e < jogos_grupos.length; e++) {
+
+        if (letras[i] === jogos_grupos[e].Jogo.grupo) {
+          grupo.palpites.push(jogos_grupos[e])
+        }
+      }
+
+      grupos.push(grupo);
+
     }
 
     var user = await User.findOne({
@@ -1504,18 +1546,10 @@ module.exports = {
       ],
     })
 
-    var users_not_done = await User.findAll({
-      where: {
-        enviado: false,
-        pix: true,
-        verificado: true
-      }
-    });
-    
     for (var i=0; i < palpites.length; i++) {
 
       if (palpites[i].User.enviado === false) {
-        palpites.splice(i, users_not_done.length)
+        palpites.splice(i, 1)
       }
     }
 

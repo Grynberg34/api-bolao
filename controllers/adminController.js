@@ -40,7 +40,7 @@ module.exports = {
             var pontos = 0;
             
             if (palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar === jogo.s2_placar) { 
-                pontos = 20;
+                pontos = 25;
             } else if ((palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar !== jogo.s2_placar) && (jogo.s1_placar > jogo.s2_placar) && (palpites[i].s1_placar > palpites[i].s2_placar)) {
                 pontos = 14;
             } else if ((palpites[i].s1_placar !== jogo.s1_placar && palpites[i].s2_placar === jogo.s2_placar) && (jogo.s1_placar > jogo.s2_placar) && (palpites[i].s1_placar > palpites[i].s2_placar)) {
@@ -675,7 +675,7 @@ module.exports = {
                 s2_placar: null,
             }, {
                 where: {
-                    jogoId: jogos_grupos[i].id
+                    id: jogos_grupos[i].id
                 }
             })
         }
@@ -697,6 +697,8 @@ module.exports = {
                 }
             })
         }
+
+        return res.status(201).json("Grupos resetadas.")
     },
     resetarOitavas: async function (req,res) {
         var jogos = await Jogo.findAll();
@@ -717,7 +719,7 @@ module.exports = {
                 s2_id: null,
             }, {
                 where: {
-                    jogoId: jogos_oitavas[i].id
+                    id: jogos_oitavas[i].id
                 }
             })
         }
@@ -753,6 +755,8 @@ module.exports = {
                 }
             })
         }
+
+        return res.status(201).json("Oitavas resetadas.")
     },
     resetarQuartas: async function (req,res) {
         var jogos = await Jogo.findAll();
@@ -773,7 +777,7 @@ module.exports = {
                 s2_id: null,
             }, {
                 where: {
-                    jogoId: jogos_quartas[i].id
+                    id: jogos_quartas[i].id
                 }
             })
         }
@@ -809,6 +813,8 @@ module.exports = {
                 }
             })
         }
+
+        return res.status(201).json("Quartas resetadas.")
     },
     resetarSemis: async function (req,res) {
         var jogos = await Jogo.findAll();
@@ -829,7 +835,7 @@ module.exports = {
                 s2_id: null,
             }, {
                 where: {
-                    jogoId: jogos_semis[i].id
+                    id: jogos_semis[i].id
                 }
             })
         }
@@ -865,6 +871,8 @@ module.exports = {
                 }
             })
         }
+
+        return res.status(201).json("Semis resetadas.")
     },
     resetarFinais: async function (req,res) {
         var jogos = await Jogo.findAll();
@@ -885,7 +893,7 @@ module.exports = {
                 s2_id: null,
             }, {
                 where: {
-                    jogoId: jogos_finais[i].id
+                    id: jogos_finais[i].id
                 }
             })
         }
@@ -950,6 +958,8 @@ module.exports = {
             })
         }
 
+        return res.status(201).json("Finais resetadas.")
+
     },
     resetarPrêmios: async function (req,res) {
         var prêmios = await Prêmio.findAll();
@@ -973,6 +983,8 @@ module.exports = {
                 }
             })
         }
+
+        return res.status(201).json("Prêmios resetados.")
     },
     resetarUsuário: async function (req,res) {
         var id = req.body.id;
