@@ -115,7 +115,7 @@ module.exports = {
 
             if (palpites[i].s1_id === jogo.s1_id && palpites[i].s2_id === jogo.s2_id && palpites[i].s1_placar === jogo.s1_placar && palpites[i].s2_placar=== jogo.s2_placar) {
                 if (jogo.s1_id === user.campeãoId || jogo.s2_id === user.campeãoId) {
-                    PontuaçãoJogo.update({
+                    await PontuaçãoJogo.update({
                         pontos: pontos*2
                     }, {
                         where: {
@@ -124,7 +124,7 @@ module.exports = {
                         }
                     })
                 } else {
-                    PontuaçãoJogo.update({
+                    await PontuaçãoJogo.update({
                         pontos: pontos
                     }, {
                         where: {
@@ -135,6 +135,8 @@ module.exports = {
                 }
             }
         }
+
+        return res.status(201).json("Resultado definido")
     },
     resetarResultadoJogo: async function (req,res) {
         var id = req.body.id;
@@ -510,6 +512,7 @@ module.exports = {
             var palpites_classificados_final = [palpite_final.s1_id, palpite_final.s2_id];
             var palpites_classificados_terceiro = [palpite_terceiro.s1_id, palpite_terceiro.s2_id];
 
+
             for (var e=0; e < palpites_classificados_final.length; e++) {
 
                 if (classificados_final.includes(palpites_classificados_final[e])) {
@@ -560,13 +563,13 @@ module.exports = {
 
             if (final.s1_id === palpite_final.s1_id && final.s2_id === palpite_final.s2_id) {
                 if (users[i].campeãoId === palpite_final.s1_id || users[i].campeãoId === palpite_final.s2_id) {
-                    PontuaçãoJogo.create({
+                    await PontuaçãoJogo.create({
                         jogoId: final.id,
                         userId: users[i].id,
                         pontos: 800
                     })
                 } else {
-                    PontuaçãoJogo.create({
+                    await PontuaçãoJogo.create({
                         jogoId: final.id,
                         userId: users[i].id,
                         pontos: 400
@@ -589,27 +592,31 @@ module.exports = {
                     })
                 }
             }
+        }
+        
+        return res.status(201).json("Pontuação de classificados concluída com sucesso.")
+    },
+    pontuarCampeão: async function (req,res) {
+        var id = req.body.id;
 
-            if (final.s1_placar > final.s2_placar) {
-                var campeão = final.s1_id;
-            } else if (final.s2_placar > final.s1_placar) {
-                var campeão = final.s2_id;
-            } else {
-                var campeão = final.vencedor;
-            }
+        var users = await User.findAll({where: {
+            enviado: true
+        }});
 
-            if (users[i].campeãoId === campeão) {
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].campeãoId === id) {
                 await PontuaçãoClassificado.create({
                     userId: users[i].id,
                     pontos: 800,
                     fase: '1',
-                    classificadoId: campeão
+                    classificadoId: id
                 })
-            }
 
+            }
         }
-        
-        return res.status(201).json("Pontuação de classificados concluída com sucesso.")
+
+        return res.status(201).json("Pontuação de campeão concluída com sucesso.")
+
     },
     pontuarPrêmios: async function (req,res) {
         var users = await User.findAll({where: {
@@ -903,7 +910,7 @@ module.exports = {
         var pontos_finais = [];
 
         for (var i=0; i < pontos.length; i++) {
-            if (pontos[i].jogoId > 60 && pontos[i].jogoId < 63) {
+            if (pontos[i].jogoId > 62 && pontos[i].jogoId < 65) {
                 pontos_finais.push(pontos[i])
             }
         }

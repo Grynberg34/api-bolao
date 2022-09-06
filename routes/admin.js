@@ -22,6 +22,8 @@ router.get('/classificados-semis', passport.authenticate('jwt', {session: false}
 
 router.get('/classificados-finais', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.pontuarClassificadosFinal);
 
+router.post('/definir-campeao', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.pontuarCampeão);
+
 router.post('/definir-resultado-fase-final', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.definirResultadoJogoFaseFinal);
 
 router.post('/pontuar-premios', passport.authenticate('jwt', {session: false}), authController.checarAdmin, adminController.pontuarPrêmios);
