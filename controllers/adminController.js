@@ -174,7 +174,7 @@ module.exports = {
         }
 
         for (var i=0; i < grupos.length; i++) {
-            if (grupos[i].s1_id === null || grupos[i].s2_id === null) {
+            if (grupos[i].s1_placar === null || grupos[i].s2_placar === null) {
                 return res.status(400).json("Jogos da fase de grupos ainda não foram finalizados.")
             }
         }
@@ -210,19 +210,23 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 50,
-                            fase: '16',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 50,
+                                fase: '16',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
 
                     } else {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 25,
-                            fase: '16',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 25,
+                                fase: '16',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
                     }
 
@@ -314,19 +318,23 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 100,
-                            fase: '8',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 100,
+                                fase: '8',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
 
                     } else {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 50,
-                            fase: '8',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 50,
+                                fase: '8',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
                     }
 
@@ -418,19 +426,23 @@ module.exports = {
                 if (classificados.includes(palpites_classificados[e])) {
 
                     if (users[i].campeãoId === palpites_classificados[e]) {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 200,
-                            fase: '4',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 200,
+                                fase: '4',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
 
                     } else {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 100,
-                            fase: '4',
-                            classificadoId: palpites_classificados[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 100,
+                                fase: '4',
+                                classificadoId: palpites_classificados[e]
+                            }
                         })
                     }
 
@@ -518,19 +530,23 @@ module.exports = {
                 if (classificados_final.includes(palpites_classificados_final[e])) {
 
                     if (users[i].campeãoId === palpites_classificados_final[e]) {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 400,
-                            fase: '2',
-                            classificadoId: palpites_classificados_final[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 400,
+                                fase: '2',
+                                classificadoId: palpites_classificados_final[e]
+                            }
                         })
 
                     } else {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 200,
-                            fase: '2',
-                            classificadoId: palpites_classificados_final[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 200,
+                                fase: '2',
+                                classificadoId: palpites_classificados_final[e]
+                            }
                         })
                     }
 
@@ -542,19 +558,23 @@ module.exports = {
                 if (classificados_terceiro.includes(palpites_classificados_terceiro[e])) {
 
                     if (users[i].campeãoId === palpites_classificados_terceiro[e]) {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 400,
-                            fase: '2.5',
-                            classificadoId: palpites_classificados_terceiro[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 400,
+                                fase: '2.5',
+                                classificadoId: palpites_classificados_terceiro[e]
+                            }
                         })
 
                     } else {
-                        await PontuaçãoClassificado.create({
-                            userId: users[i].id,
-                            pontos: 200,
-                            fase: '2.5',
-                            classificadoId: palpites_classificados_terceiro[e]
+                        await PontuaçãoClassificado.findOrCreate({
+                            where: {
+                                userId: users[i].id,
+                                pontos: 200,
+                                fase: '2.5',
+                                classificadoId: palpites_classificados_terceiro[e]
+                            }
                         })
                     }
 
@@ -605,11 +625,13 @@ module.exports = {
 
         for (var i = 0; i < users.length; i++) {
             if (users[i].campeãoId === id) {
-                await PontuaçãoClassificado.create({
-                    userId: users[i].id,
-                    pontos: 800,
-                    fase: '1',
-                    classificadoId: id
+                await PontuaçãoClassificado.findOrCreate({
+                    where: {
+                        userId: users[i].id,
+                        pontos: 800,
+                        fase: '1',
+                        classificadoId: id
+                    }
                 })
 
             }
