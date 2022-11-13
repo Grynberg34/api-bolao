@@ -28,7 +28,7 @@ module.exports = {
       }
     }).then(function (user) {
       if (user[0]) {
-        var payload = { id: user[0].id, tipo_conta: user[0].tipo_conta };
+        var payload = { id: user[0].id, tipo_conta: user[0].tipo_conta, verificado: user[0].verificado, pix: user[0].pix, enviado: user[0].enviado };
         var token = jwt.sign(payload, jwtOptions.secretOrKey);
         return res.status(200).json({ "mensagem" : 'Token gerado', token: token });
       }
