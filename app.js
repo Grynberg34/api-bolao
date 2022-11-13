@@ -61,7 +61,7 @@ passport.use(new GoogleStrategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/google",
+    callbackURL: "https://api-bolao-zjibz.ondigitalocean.app/auth/google",
     scope: "profile"
   },
   function(accessToken, refreshToken, profile, done) {
