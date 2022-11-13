@@ -10,7 +10,7 @@ module.exports = {
     passport.authenticate('google', {session: false}, 
     function (err, user, info){
       if (user) {
-        var payload = { id: user.id, tipo_conta: user.tipo_conta };
+        var payload = { id: user.id, tipo_conta: user.tipo_conta, verificado: user.verificado, pix: user.pix, enviado: user.enviado};
         var token = jwt.sign(payload, jwtOptions.secretOrKey);
         return res.status(200).json({ "mensagem" : 'Token gerado', token: token });
       } else {
