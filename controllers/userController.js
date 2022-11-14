@@ -78,7 +78,7 @@ module.exports = {
         return res.status(201).json("Palpite enviado")
       }
 
-      else {
+      else if (palpite) {
         await PalpiteJogo.update({
           jogoId: id_jogo,
           userId: decoded.id,
