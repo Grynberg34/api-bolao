@@ -188,6 +188,8 @@ module.exports = {
           var s1 = seleções.find(x => x.id === palpites[e].Jogo.s1_id)
           var s2 = seleções.find(x => x.id === palpites[e].Jogo.s2_id)
 
+          console.log(s1, s2)
+
           s1.dataValues.golsPro = s1.dataValues.golsPro + palpites[e].s1_placar;
           s1.dataValues.golsContra = s1.dataValues.golsContra + palpites[e].s2_placar;
           s1.dataValues.saldo = s1.dataValues.golsPro - s1.dataValues.golsContra;
