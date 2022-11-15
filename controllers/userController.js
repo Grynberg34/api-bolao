@@ -1223,6 +1223,33 @@ module.exports = {
     
     })
   },
+  mostrarUserInfo: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var info = [];
+
+      var user = await User.findOne({
+        where: {
+          id: decoded.id
+        },
+        include: Seleção
+      });
+
+      var prêmios = await PalpitePrêmio.findAll({
+        where: {
+          userId: decoded.id
+        }
+      })
+
+      
+      info.push(user, prêmios);
+
+      return res.status(201).json(info)
+    
+    })
+  },
   mostrarRanking: async function (req,res) {
 
     var users = await User.findAll({where: {

@@ -40,6 +40,8 @@ router.get('/finalizar', passport.authenticate('jwt', {session: false}), authCon
 
 router.get('/mostrar-palpites', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpites);
 
+router.get('/mostrar-user', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarUserInfo);
+
 router.get('/ranking', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarRanking);
 
 router.get('/ranking/:id', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.mostrarPalpitesPorId);
