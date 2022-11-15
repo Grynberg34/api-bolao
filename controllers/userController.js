@@ -57,7 +57,9 @@ module.exports = {
     var s2_placar = req.body.s2_placar;
     var vencedor = req.body.vencedor;
 
-
+    if (s1_placar > 1000 || s2_placar > 1000) {
+      return res.status(400).json("Número acima do máximo")
+    }
 
     jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
 
@@ -95,6 +97,33 @@ module.exports = {
         return res.status(201).json("Palpite atualizado")
 
       }
+
+    });
+  },
+  limparJogoDuplicado: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+    var id_jogo = req.body.id_jogo;
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpiteJogo.findAll({where: {
+        jogoId: id_jogo,
+        userId : decoded.id,
+      }});
+
+
+      for (var i=0; i < palpites.length; i++) {
+        if (i !== 0) {
+          await PalpiteJogo.destroy({
+            where: {
+              id: palpites[i].id,
+            }
+          })
+        }
+      }
+
+      return res.status(201).json("Palpite duplicado")
+      
 
     });
   },
@@ -139,6 +168,34 @@ module.exports = {
         return res.status(201).json("Palpite atualizado")
 
       }
+
+    });
+  },
+  limparPrêmiosDuplicados: async function (req,res) {
+    var token = req.header('authorization').substr(7);
+    var id_prêmio = req.body.id_prêmio;
+
+    jwt.verify(token, process.env.JWT_KEY, async function(err, decoded) {
+
+      var palpites = await PalpitePrêmio.findAll({where: {
+        prêmioId: id_prêmio,
+        userId : decoded.id,
+      }});
+
+
+      for (var i=0; i < palpites.length; i++) {
+        if (i !== 0) {
+          await PalpitePrêmio.destroy({
+            where: {
+              id: palpites[i].id,
+            }
+          })
+        }
+      }
+
+      return res.status(201).json("Palpites duplicados deletados.")
+
+      
 
     });
   },

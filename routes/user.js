@@ -30,7 +30,11 @@ router.get('/finais', passport.authenticate('jwt', {session: false}), authContro
 
 router.post('/enviar-palpite-jogo', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpiteJogo);
 
+router.post('/limpar-jogo-duplicado', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.limparJogoDuplicado);
+
 router.post('/enviar-palpite-premio', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.enviarPalpitePrêmio);
+
+router.post('/limpar-premios-duplicados', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.limparPrêmiosDuplicados);
 
 router.get('/finalizar', passport.authenticate('jwt', {session: false}), authController.checarUser, userController.finalizarBolao);
 
