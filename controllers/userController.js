@@ -1002,11 +1002,11 @@ module.exports = {
           [{ model: Jogo }, 'data', 'asc' ]
         ],
         include: [
-          { model: Seleção, as: 's1', separate: true},
-          { model: Seleção, as: 's2', separate: true},
-          { model: Jogo,  include: [
-            {model: Seleção, as: 's1', separate: true},
-            {model: Seleção, as: 's2', separate: true}
+          { model: Seleção, as: 's1'},
+          { model: Seleção, as: 's2'},
+          { model: Jogo, include: [
+            {model: Seleção, as: 's1'},
+            {model: Seleção, as: 's2'}
           ]},
         ],
       });
