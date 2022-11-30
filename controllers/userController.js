@@ -1552,6 +1552,9 @@ module.exports = {
         { model: Seleção, as: 's2'},
 
         ],
+        order: [
+          ['data', 'asc' ]
+        ]
     });
 
     for (var i=0; i < jogos.length; i++) {
