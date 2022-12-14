@@ -1160,7 +1160,7 @@ module.exports = {
 
       // FINAL
       
-      var pontos_final = await PontuaçãoClassificado.findOne({
+      var pontos_final = await PontuaçãoClassificado.findAll({
         where: {
           userId: decoded.id,
           fase: '2'

@@ -561,7 +561,7 @@ module.exports = {
                         await PontuaçãoClassificado.findOrCreate({
                             where: {
                                 userId: users[i].id,
-                                pontos: 400,
+                                pontos: 200,
                                 fase: '2.5',
                                 classificadoId: palpites_classificados_terceiro[e]
                             }
@@ -571,7 +571,7 @@ module.exports = {
                         await PontuaçãoClassificado.findOrCreate({
                             where: {
                                 userId: users[i].id,
-                                pontos: 200,
+                                pontos: 100,
                                 fase: '2.5',
                                 classificadoId: palpites_classificados_terceiro[e]
                             }
@@ -602,13 +602,13 @@ module.exports = {
                     await PontuaçãoJogo.create({
                         jogoId: terceiro.id,
                         userId: users[i].id,
-                        pontos: 800
+                        pontos: 400
                     })
                 } else {
                     await PontuaçãoJogo.create({
                         jogoId: terceiro.id,
                         userId: users[i].id,
-                        pontos: 400
+                        pontos: 200
                     })
                 }
             }
