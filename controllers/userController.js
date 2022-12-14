@@ -1167,13 +1167,11 @@ module.exports = {
           fase: '2'
         }
       });
+      var pontos_final_total = 0;
 
       for (var i=0; i < pontos_final.length; i++) {
         pontos_final_total = pontos_final_total + pontos_final[i].pontos
       }
-      
-      var pontos_final_total = 0;
-
       
       // CAMPEÃO
       
@@ -1469,7 +1467,7 @@ module.exports = {
 
       // TERCEIRO
       
-      var pontos_terceiro = await PontuaçãoClassificado.findOne({
+      var pontos_terceiro = await PontuaçãoClassificado.findAll({
         where: {
           userId: id,
           fase: '2.5'
@@ -1477,26 +1475,25 @@ module.exports = {
       });
 
       var pontos_terceiro_total = 0;
-      
-      if (pontos_terceiro) {
-        pontos_terceiro_total = pontos_terceiro_total + pontos_terceiro.pontos;
+
+      for (var i=0; i < pontos_terceiro.length; i++) {
+        pontos_terceiro_total = pontos_terceiro_total + pontos_terceiro[i].pontos
       }
+
 
       // FINAL
       
-      var pontos_final = await PontuaçãoClassificado.findOne({
+      var pontos_final = await PontuaçãoClassificado.findAll({
         where: {
           userId: id,
           fase: '2'
         }
       });
-      
       var pontos_final_total = 0;
 
-      if (pontos_final) {
-        pontos_final_total = pontos_final_total + pontos_final.pontos;
+      for (var i=0; i < pontos_final.length; i++) {
+        pontos_final_total = pontos_final_total + pontos_final[i].pontos
       }
-      
       
       // CAMPEÃO
       
