@@ -1195,12 +1195,13 @@ module.exports = {
           userId: decoded.id
         }
       });
-      
+
+
       
       var pontos_prêmios_total = 0;
       
       for (var i=0; i < pontos_prêmios.length; i++) {
-        pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[i].pontos;
+        pontos_prêmios_total = pontos_prêmios_total + pontos_prêmios[i].pontos;
       }
 
       var pontos = {
@@ -1299,7 +1300,7 @@ module.exports = {
       var pontos_prêmios_total = 0;
       
       for (var e=0; e < pontos_prêmios.length; e++) {
-        pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[e].pontos;
+        pontos_prêmios_total = pontos_prêmios_total + pontos_prêmios[e].pontos;
       }
 
       var pontos = pontos_jogos_total + pontos_classificados_total + pontos_prêmios_total;
@@ -1522,7 +1523,7 @@ module.exports = {
       var pontos_prêmios_total = 0;
       
       for (var i=0; i < pontos_prêmios.length; i++) {
-        pontos_prêmios_total = pontos_jogos_total + pontos_prêmios[i].pontos;
+        pontos_prêmios_total = pontos_prêmios_total + pontos_prêmios[i].pontos;
       }
 
       var pontos = {
